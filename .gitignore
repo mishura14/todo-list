@@ -1,0 +1,45 @@
+# Бинарные файлы
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Файлы IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Go файлы
+/bin/
+/dist/
+
+# Dependency directories
+vendor/
+/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Логи
+*.log
+
+# Базы данных
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker
+docker-compose.override.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Координаты модулей
+go.work
