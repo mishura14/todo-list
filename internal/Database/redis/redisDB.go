@@ -2,8 +2,11 @@ package redis
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"os/exec"
 
+	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -11,9 +14,15 @@ var ctx = context.Background()
 
 // ConnectResid  подключение к redis и запусе если не запущен
 func ConnectRedis() (*redis.Client, error) {
+	errd := godotenv.Load("/home/mishura/ZedProject/git-register-project/.env")
+	if errd != nil {
+		fmt.Println("Error loading .env file:", errd)
+	}
+	redis_port := os.Getenv("REDIS_PORT")
+
 	//Проверям продключение
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     redis_port,
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
