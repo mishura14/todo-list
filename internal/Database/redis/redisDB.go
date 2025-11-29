@@ -2,44 +2,48 @@ package redis
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/exec"
 
-	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
 
-var ctx = context.Background()
+var RDB *redis.Client
+var Ctx = context.Background()
 
-// ConnectResid  подключение к redis и запусе если не запущен
+// ConnectRedis подключение к redis и запуск если не запущен
 func ConnectRedis() (*redis.Client, error) {
-	errd := godotenv.Load("/home/mishura/ZedProject/git-register-project/.env")
-	if errd != nil {
-		fmt.Println("Error loading .env file:", errd)
-	}
 	redis_port := os.Getenv("REDIS_PORT")
+	if redis_port == "" {
+		redis_port = "localhost:6379" // default port
+	}
 
-	//Проверям продключение
+	//Проверяем подключение
 	client := redis.NewClient(&redis.Options{
 		Addr:     redis_port,
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
+
 	//проверяем подключение
-	_, err := client.Ping(ctx).Result()
+	_, err := client.Ping(Ctx).Result()
 	if err == nil {
+		RDB = client // Инициализируем глобальную переменную
 		return client, nil
 	}
-	//если не удолось запускаем redis docker
+
+	//если не удалось подключиться, запускаем redis docker
 	if err := startRedis(); err != nil {
 		return nil, err
 	}
-	// подключаемся снова
-	_, err = client.Ping(ctx).Result()
+
+	// подключаемся снова после запуска Redis
+	_, err = client.Ping(Ctx).Result()
 	if err != nil {
 		return nil, err
 	}
+
+	RDB = client // Инициализируем глобальную переменную
 	return client, nil
 }
 func startRedis() error {

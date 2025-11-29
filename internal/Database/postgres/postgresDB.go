@@ -7,89 +7,81 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
-// Проверяет работает ли БД
-func isDBRunning() bool {
-	errd := godotenv.Load("/home/mishura/ZedProject/git-register-project/.env")
-	if errd != nil {
-		fmt.Println("Error loading .env file:", errd)
-	}
-	db_name := os.Getenv("DB_NAME")
-	db_user := os.Getenv("DB_USER")
-	db_password := os.Getenv("DB_PASSWORD")
-	db_host := os.Getenv("DB_HOST")
-	db_port := os.Getenv("DB_PORT")
+var DB *sql.DB
 
-	db, err := sql.Open("", fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", db_user, db_password, db_host, db_port, db_name))
+func ConnectDB() (*sql.DB, error) {
+
+	// Параметры подключения с значениями по умолчанию
+	dbHost := getEnvOrDefault("DB_HOST", "localhost")
+	dbPort := getEnvOrDefault("DB_PORT", "5432")
+	dbUser := getEnvOrDefault("DB_USER", "postgres")
+	dbPassword := getEnvOrDefault("DB_PASSWORD", "postgres")
+	dbName := getEnvOrDefault("DB_NAME", "postgres")
+
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		dbUser, dbPassword, dbHost, dbPort, dbName)
+
+	// Пытаемся подключиться
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		return false
+		return nil, fmt.Errorf("ошибка подключения: %v", err)
 	}
-	defer db.Close()
 
-	return db.Ping() == nil
+	// Проверяем подключение
+	if err := db.Ping(); err != nil {
+		fmt.Println("🚀 Запускаем PostgreSQL в Docker...")
+
+		// Запускаем контейнер
+		if err := startDB(); err != nil {
+			return nil, fmt.Errorf("ошибка запуска БД: %v", err)
+		}
+
+		// Ждем запуска
+		fmt.Println("⏳ Ожидаем запуска PostgreSQL...")
+		time.Sleep(5 * time.Second)
+
+		// Пытаемся снова
+		db, err = sql.Open("postgres", connStr)
+		if err != nil {
+			return nil, fmt.Errorf("ошибка подключения после запуска: %v", err)
+		}
+
+		if err := db.Ping(); err != nil {
+			return nil, fmt.Errorf("не удалось подключиться к БД: %v", err)
+		}
+	}
+
+	// Инициализируем глобальную переменную
+	DB = db
+	return DB, nil
 }
 
-// Подключается к БД
-func connectToDB() (*sql.DB, error) {
-	errd := godotenv.Load("/home/mishura/ZedProject/git-register-project/.env")
-	if errd != nil {
-		fmt.Println("Error loading .env file:", errd)
-	}
-	db_name := os.Getenv("DB_NAME")
-	db_user := os.Getenv("DB_USER")
-	db_password := os.Getenv("DB_PASSWORD")
-	db_host := os.Getenv("DB_HOST")
-	db_port := os.Getenv("DB_PORT")
-	db, err := sql.Open("postgres", fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", db_user, db_password, db_host, db_port, db_name))
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
-}
-
-// Запускает контейнер с БД
 func startDB() error {
 	// Проверяем есть ли контейнер
 	cmd := exec.Command("docker", "inspect", "postgres")
 	if cmd.Run() == nil {
-		// Контейнер есть, запускаем
+		fmt.Println("🔄 Запускаем существующий контейнер PostgreSQL...")
 		return exec.Command("docker", "start", "postgres").Run()
 	}
 
 	// Создаем новый контейнер
+	fmt.Println("📦 Создаем новый контейнер PostgreSQL...")
 	cmd = exec.Command("docker", "run", "-d",
 		"--name", "postgres",
 		"-e", "POSTGRES_PASSWORD=postgres",
+		"-e", "POSTGRES_DB=postgres",
 		"-p", "5432:5432",
 		"postgres:15")
-
 	return cmd.Run()
 }
 
-// функция подключения к БД
-func ConnectDB() (*sql.DB, error) {
-	// Если БД уже работает - подключаемся
-	if isDBRunning() {
-		return connectToDB()
+// Вспомогательная функция для получения переменной окружения с значением по умолчанию
+func getEnvOrDefault(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
 	}
-
-	// Запускаем БД
-	if err := startDB(); err != nil {
-		return nil, fmt.Errorf("ошибка запуска БД: %v", err)
-	}
-
-	// Ждем запуска БД
-	time.Sleep(5 * time.Second)
-
-	// Пытаемся подключиться
-	return connectToDB()
+	return defaultValue
 }
