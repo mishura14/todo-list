@@ -5,6 +5,7 @@ import (
 	"git-register-project/internal/Database/postgres"
 )
 
+// запрос в базу данных проверки существования email
 func CheckEmailExists(email string) (bool, error) {
 	var exists bool
 	err := postgres.DB.QueryRowContext(context.Background(),

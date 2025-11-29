@@ -2,6 +2,7 @@ package servise
 
 import "unicode"
 
+// проверка пароля на наличие цифр
 func ContainsDigits(s string) bool {
 	for _, r := range s {
 		if unicode.IsDigit(r) {
@@ -11,6 +12,7 @@ func ContainsDigits(s string) bool {
 	return false
 }
 
+// проверка пароля на наличие спецсимволов
 func ContainsSpecialChars(s string) bool {
 	for _, r := range s {
 		if !unicode.IsLetter(r) && !unicode.IsDigit(r) {
@@ -20,6 +22,7 @@ func ContainsSpecialChars(s string) bool {
 	return false
 }
 
+// проверка пароля на длину
 func CheckPassword(s string) bool {
 	return len(s) >= 8 && ContainsDigits(s) && ContainsSpecialChars(s)
 }

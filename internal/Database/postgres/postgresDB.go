@@ -32,7 +32,6 @@ func ConnectDB() (*sql.DB, error) {
 
 	// Проверяем подключение
 	if err := db.Ping(); err != nil {
-		fmt.Println("🚀 Запускаем PostgreSQL в Docker...")
 
 		// Запускаем контейнер
 		if err := startDB(); err != nil {

@@ -13,33 +13,40 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// оброботчик запросов регистрации
 func Register(c *gin.Context) {
 	var user models.User
+	//проверка получения данных
 	if err := c.BindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "неверные формат данных"})
 		return
 	}
+	//проверка формата email
 	exec := servise.CheckEmail(user.Email)
 	if !exec {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат email"})
 		return
 	}
 	var exists bool
+	//проверка email на существование в базе данных
 	exists, err := repository.CheckEmailExists(user.Email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "неудалось проверить email в базе данных"})
 		return
 	}
+	//проверка email на существование в базе данных
 	if exists {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "email уже зарегистрирован"})
 		return
 	}
+	//проверка пароля на соответствие требованиям и хеширование
 	if servise.CheckPassword(user.Password) {
 		hashpassword, err := servise.HashPassword(user.Password)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "ошибка хеширования пароля"})
 			return
 		}
+		//генерация кода подтверждения
 		code := servise.GenerateSecureCode()
 		if err := serversmtp.SendConfremRegister(user.Email, code); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err})
@@ -51,6 +58,7 @@ func Register(c *gin.Context) {
 			Password: hashpassword,
 			Code:     code,
 		}
+		//преобразование в json
 		user_redisJSON, err := json.Marshal(user_redis)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сериализации данных"})

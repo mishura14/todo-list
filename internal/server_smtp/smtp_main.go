@@ -8,6 +8,7 @@ import (
 	mail "github.com/xhit/go-simple-mail/v2"
 )
 
+// создание подключение к SMTP серверу
 func getSMTPClient() (*mail.SMTPClient, error) {
 	server := mail.NewSMTPClient()
 
