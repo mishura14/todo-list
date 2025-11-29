@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"git-register-project/internal/Database/postgres"
 	"git-register-project/internal/Database/redis"
-	handler_register "git-register-project/internal/handler/hand_register"
+	"git-register-project/internal/router"
 	"log"
 	"os"
 
@@ -35,8 +35,7 @@ func main() {
 	fmt.Println("Connection Redis")
 
 	r := gin.Default()
-	r.POST("/register", handler_register.Register)
-	r.POST("/confirm_register", handler_register.Confirm_register)
+	router.SetupRouter(r)
 
 	// Получаем порт из .env или используем по умолчанию
 	port := os.Getenv("APP_PORT")
