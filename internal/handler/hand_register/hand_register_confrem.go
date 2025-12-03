@@ -2,7 +2,6 @@ package handler_register
 
 import (
 	"encoding/json"
-	"git-register-project/internal/Database/redis"
 	"git-register-project/internal/models"
 	"git-register-project/internal/repository"
 	"net/http"
@@ -11,7 +10,7 @@ import (
 )
 
 // обработчик подтверждения регистрации
-func Confirm_register(c *gin.Context) {
+func (r *Redis) Confirm_register(c *gin.Context) {
 	var code models.CodeUser
 	//получение и обработка кода подтверждения регистрации
 	if err := c.BindJSON(&code); err != nil {
@@ -19,7 +18,7 @@ func Confirm_register(c *gin.Context) {
 		return
 	}
 	//поиск кода в Redis
-	val, err := redis.RDB.Get(redis.Ctx, code.Code).Result()
+	val, err := r.redisClient.Client.Get(r.redisClient.Ctx, code.Code).Result()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "код не найден или время истекло"})
 		return
@@ -37,7 +36,7 @@ func Confirm_register(c *gin.Context) {
 		return
 	}
 	//удаление кода из Redis
-	err = redis.RDB.Del(redis.Ctx, code.Code).Err()
+	err = r.redisClient.Client.Del(r.redisClient.Ctx, code.Code).Err()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка при удалении кода"})
 		return

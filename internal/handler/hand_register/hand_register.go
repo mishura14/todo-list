@@ -13,8 +13,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Redis struct {
+	redisClient *redis.Redis
+}
+
 // оброботчик запросов регистрации
-func Register(c *gin.Context) {
+func (r *Redis) Register(c *gin.Context) {
 	var user models.User
 	//проверка получения данных
 	if err := c.BindJSON(&user); err != nil {
@@ -65,7 +69,7 @@ func Register(c *gin.Context) {
 			return
 		}
 		//сохраняем данные в redis
-		err = redis.RDB.Set(redis.Ctx, code, user_redisJSON, 5*time.Minute).Err()
+		err = r.redisClient.Client.Set(r.redisClient.Ctx, code, user_redisJSON, 5*time.Minute).Err()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сохранения данных в redis"})
 			return

@@ -10,9 +10,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var DB *sql.DB
+// Database хранит подключение к базе данных
+type Database struct {
+	DB *sql.DB
+}
 
-func ConnectDB() (*sql.DB, error) {
+func ConnectDB() (*Database, error) {
 
 	// Параметры подключения с значениями по умолчанию
 	dbHost := getEnvOrDefault("DB_HOST", "localhost")
@@ -53,9 +56,8 @@ func ConnectDB() (*sql.DB, error) {
 		}
 	}
 
-	// Инициализируем глобальную переменную
-	DB = db
-	return DB, nil
+	// Инициализируем структуру с подключением
+	return &Database{DB: db}, nil
 }
 
 func startDB() error {

@@ -8,44 +8,56 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var RDB *redis.Client
-var Ctx = context.Background()
+// Redis хранит клиент Redis
+type Redis struct {
+	Client *redis.Client
+	Ctx    context.Context
+}
 
-// ConnectRedis подключение к redis и запуск если не запущен
-func ConnectRedis() (*redis.Client, error) {
+// ConnectRedis подключается к redis и запускает если не запущен
+func ConnectRedis() (*Redis, error) {
 	redis_port := os.Getenv("REDIS_PORT")
 	if redis_port == "" {
 		redis_port = "localhost:6379" // default port
 	}
 
-	//Проверяем подключение
+	// Создаем контекст
+	ctx := context.Background()
+
+	// Проверяем подключение
 	client := redis.NewClient(&redis.Options{
 		Addr:     redis_port,
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
 
-	//проверяем подключение
-	_, err := client.Ping(Ctx).Result()
+	// проверяем подключение
+	_, err := client.Ping(ctx).Result()
 	if err == nil {
-		RDB = client // Инициализируем глобальную переменную
-		return client, nil
+		return &Redis{
+			Client: client,
+			Ctx:    ctx,
+		}, nil
 	}
 
-	//если не удалось подключиться, запускаем redis docker
+	// если не удалось подключиться, запускаем redis docker
 	if err := startRedis(); err != nil {
 		return nil, err
 	}
 
 	// подключаемся снова после запуска Redis
-	_, err = client.Ping(Ctx).Result()
+	_, err = client.Ping(ctx).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	RDB = client // Инициализируем глобальную переменную
-	return client, nil
+	return &Redis{
+		Client: client,
+		Ctx:    ctx,
+	}, nil
 }
+
+// startRedis запуск Redis в Docker
 func startRedis() error {
 	cmd := exec.Command("docker", "inspect", "redis")
 	if cmd.Run() == nil {
