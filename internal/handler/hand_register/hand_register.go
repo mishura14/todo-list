@@ -13,12 +13,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Redis struct {
-	redisClient *redis.Redis
+type Register struct {
+	redis *redis.Redis
+	repo  repository.UserRepository
+	mail  serversmtp.EmailSender
+}
+
+func NewRegister(redis *redis.Redis, repo repository.UserRepository, mail serversmtp.EmailSender) *Register {
+	return &Register{
+		redis: redis,
+		repo:  repo,
+		mail:  mail,
+	}
 }
 
 // оброботчик запросов регистрации
-func (r *Redis) Register(c *gin.Context) {
+func (r *Register) Register(c *gin.Context) {
 	var user models.User
 	//проверка получения данных
 	if err := c.BindJSON(&user); err != nil {
@@ -33,7 +43,7 @@ func (r *Redis) Register(c *gin.Context) {
 	}
 	var exists bool
 	//проверка email на существование в базе данных
-	exists, err := repository.CheckEmailExists(user.Email)
+	exists, err := r.repo.CheckEmailExists(user.Email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "неудалось проверить email в базе данных"})
 		return
@@ -52,7 +62,7 @@ func (r *Redis) Register(c *gin.Context) {
 		}
 		//генерация кода подтверждения
 		code := servise.GenerateSecureCode()
-		if err := serversmtp.SendConfremRegister(user.Email, code); err != nil {
+		if err := r.mail.SendConfremRegister(user.Email, code); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err})
 			return
 		}
@@ -69,7 +79,7 @@ func (r *Redis) Register(c *gin.Context) {
 			return
 		}
 		//сохраняем данные в redis
-		err = r.redisClient.Client.Set(r.redisClient.Ctx, code, user_redisJSON, 5*time.Minute).Err()
+		err = r.redis.Client.Set(r.redis.Ctx, code, user_redisJSON, 5*time.Minute).Err()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сохранения данных в redis"})
 			return

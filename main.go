@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"git-register-project/internal/Database/postgres"
 	"git-register-project/internal/Database/redis"
+	"git-register-project/internal/repository"
 	"git-register-project/internal/router"
 	"log"
 	"os"
@@ -23,7 +24,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	defer db.DB.Close()
 	fmt.Println("Connected postgres")
 
 	//подключение redis
@@ -31,11 +32,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer rdb.Close()
+	defer rdb.Client.Close()
 	fmt.Println("Connection Redis")
-
+	var repo repository.UserRepository = repository.NewPostgreUser(db.DB)
 	r := gin.Default()
-	router.SetupRouter(r)
+	router.SetupRouter(r, rdb, repo)
 
 	// Получаем порт из .env или используем по умолчанию
 	port := os.Getenv("APP_PORT")

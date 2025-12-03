@@ -3,14 +3,13 @@ package handler_register
 import (
 	"encoding/json"
 	"git-register-project/internal/models"
-	"git-register-project/internal/repository"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 // обработчик подтверждения регистрации
-func (r *Redis) Confirm_register(c *gin.Context) {
+func (r *Register) Confirm_register(c *gin.Context) {
 	var code models.CodeUser
 	//получение и обработка кода подтверждения регистрации
 	if err := c.BindJSON(&code); err != nil {
@@ -18,7 +17,7 @@ func (r *Redis) Confirm_register(c *gin.Context) {
 		return
 	}
 	//поиск кода в Redis
-	val, err := r.redisClient.Client.Get(r.redisClient.Ctx, code.Code).Result()
+	val, err := r.redis.Client.Get(r.redis.Ctx, code.Code).Result()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "код не найден или время истекло"})
 		return
@@ -30,13 +29,17 @@ func (r *Redis) Confirm_register(c *gin.Context) {
 		return
 	}
 	//регистрация пользователя
-	err = repository.CreateUser(&user_from_redis)
+	err = r.repo.CreateUser(&models.UserRedis{
+		Name:     user_from_redis.Name,
+		Email:    user_from_redis.Email,
+		Password: user_from_redis.Password,
+	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка при создании пользователя"})
 		return
 	}
 	//удаление кода из Redis
-	err = r.redisClient.Client.Del(r.redisClient.Ctx, code.Code).Err()
+	err = r.redis.Client.Del(r.redis.Ctx, code.Code).Err()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка при удалении кода"})
 		return

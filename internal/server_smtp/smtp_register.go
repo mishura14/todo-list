@@ -6,8 +6,17 @@ import (
 	mail "github.com/xhit/go-simple-mail/v2"
 )
 
+type EmailSender interface {
+	SendConfremRegister(toEmail, code string) error
+}
+type SMTPSender struct{}
+
+func NewSMTPSender() *SMTPSender {
+	return &SMTPSender{}
+}
+
 // функция для отправки кода подтверждения регистрации на email
-func SendConfremRegister(toEmail, code string) error {
+func (s *SMTPSender) SendConfremRegister(toEmail, code string) error {
 	smtpClient, err := getSMTPClient()
 	if err != nil {
 		return err
