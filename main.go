@@ -34,7 +34,7 @@ func main() {
 	}
 	defer rdb.Client.Close()
 	fmt.Println("Connection Redis")
-	var repo repository.UserRepository = repository.NewPostgreUser(db.DB)
+	var repo repository.UserRegister = repository.NewPostgreUser(db.DB)
 	r := gin.Default()
 	router.SetupRouter(r, rdb, repo)
 

@@ -6,9 +6,6 @@ import (
 	mail "github.com/xhit/go-simple-mail/v2"
 )
 
-type EmailSender interface {
-	SendConfremRegister(toEmail, code string) error
-}
 type SMTPSender struct{}
 
 func NewSMTPSender() *SMTPSender {

@@ -5,7 +5,6 @@ import (
 	"git-register-project/internal/Database/redis"
 	"git-register-project/internal/models"
 	"git-register-project/internal/repository"
-	serversmtp "git-register-project/internal/server_smtp"
 	"git-register-project/internal/servise"
 	"net/http"
 	"time"
@@ -15,11 +14,11 @@ import (
 
 type Register struct {
 	redis *redis.Redis
-	repo  repository.UserRepository
-	mail  serversmtp.EmailSender
+	repo  repository.UserRegister
+	mail  repository.EmailSender
 }
 
-func NewRegister(redis *redis.Redis, repo repository.UserRepository, mail serversmtp.EmailSender) *Register {
+func NewRegister(redis *redis.Redis, repo repository.UserRegister, mail repository.EmailSender) *Register {
 	return &Register{
 		redis: redis,
 		repo:  repo,

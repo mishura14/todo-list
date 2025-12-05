@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter(r *gin.Engine, redisClient *redis.Redis, repo repository.UserRepository) {
+func SetupRouter(r *gin.Engine, redisClient *redis.Redis, repo repository.UserRegister) {
 
 	mailSender := serversmtp.NewSMTPSender()
 
