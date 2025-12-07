@@ -1,4 +1,4 @@
-package servise
+package valid_password
 
 import (
 	"testing"

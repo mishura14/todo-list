@@ -1,4 +1,4 @@
-package servise
+package valid_email
 
 import (
 	"net"

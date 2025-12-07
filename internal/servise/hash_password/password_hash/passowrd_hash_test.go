@@ -1,6 +1,9 @@
-package servise
+package password_hash
 
-import "testing"
+import (
+	check_hash_password "git-register-project/internal/servise/hash_password/check_hach_password"
+	"testing"
+)
 
 func TestHashPassword(t *testing.T) {
 	password := "mishura_14_12_2010(google)"
@@ -22,7 +25,7 @@ func TestHashPassword(t *testing.T) {
 	}
 
 	// 4. Проверяем что можно верифицировать хеш
-	if !CheckPasswordHash(password, hash) {
+	if !check_hash_password.CheckPasswordHash(password, hash) {
 		t.Errorf("Cannot verify generated hash")
 	}
 

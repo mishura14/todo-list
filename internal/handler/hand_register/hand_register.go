@@ -5,7 +5,10 @@ import (
 	"git-register-project/internal/Database/redis"
 	"git-register-project/internal/models"
 	"git-register-project/internal/repository"
-	"git-register-project/internal/servise"
+	"git-register-project/internal/servise/generate_code"
+	"git-register-project/internal/servise/hash_password/password_hash"
+	"git-register-project/internal/servise/validate/valid_email"
+	"git-register-project/internal/servise/validate/valid_password"
 	"net/http"
 	"time"
 
@@ -35,7 +38,7 @@ func (r *Register) Register(c *gin.Context) {
 		return
 	}
 	//проверка формата email
-	exec := servise.CheckEmail(user.Email)
+	exec := valid_email.CheckEmail(user.Email)
 	if !exec {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат email"})
 		return
@@ -53,14 +56,14 @@ func (r *Register) Register(c *gin.Context) {
 		return
 	}
 	//проверка пароля на соответствие требованиям и хеширование
-	if servise.CheckPassword(user.Password) {
-		hashpassword, err := servise.HashPassword(user.Password)
+	if valid_password.CheckPassword(user.Password) {
+		hashpassword, err := password_hash.HashPassword(user.Password)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "ошибка хеширования пароля"})
 			return
 		}
 		//генерация кода подтверждения
-		code := servise.GenerateSecureCode()
+		code := generate_code.GenerateSecureCode()
 		if err := r.mail.SendConfremRegister(user.Email, code); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err})
 			return

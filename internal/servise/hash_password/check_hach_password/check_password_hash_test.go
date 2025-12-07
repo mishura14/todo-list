@@ -1,12 +1,13 @@
-package servise
+package check_hash_password
 
 import (
+	"git-register-project/internal/servise/hash_password/password_hash"
 	"testing"
 )
 
 func TestCheckPasswordHash(t *testing.T) {
 	password := "mishura14"
-	hash, err := HashPassword(password)
+	hash, err := password_hash.HashPassword(password)
 	if err != nil {
 		t.Error("hashing password failed", err)
 	}

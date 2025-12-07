@@ -1,4 +1,4 @@
-package servise
+package check_hash_password
 
 import "golang.org/x/crypto/bcrypt"
 

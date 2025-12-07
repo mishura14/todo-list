@@ -1,4 +1,4 @@
-package servise
+package generate_code
 
 import (
 	"strconv"
