@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -70,4 +71,16 @@ func startRedis() error {
 		"redis:7-alpine",
 	)
 	return cmd.Run()
+}
+func (r *Redis) Set(ctx context.Context, key string, value []byte, expiration time.Duration) error {
+	return r.Client.Set(ctx, key, value, expiration).Err()
+}
+
+func (r *Redis) Get(ctx context.Context, key string) ([]byte, error) {
+	val, err := r.Client.Get(ctx, key).Bytes()
+	return val, err
+}
+
+func (r *Redis) Del(ctx context.Context, key string) error {
+	return r.Client.Del(ctx, key).Err()
 }

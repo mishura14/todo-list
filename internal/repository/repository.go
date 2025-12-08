@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"git-register-project/internal/models"
 	"time"
 )
@@ -16,6 +17,7 @@ type EmailSender interface {
 }
 
 type RedisClient interface {
-	Set(key string, value []byte, expiration time.Duration) error
-	Get(key string) ([]byte, error)
+	Set(ctx context.Context, key string, value []byte, expiration time.Duration) error
+	Get(ctx context.Context, key string) ([]byte, error)
+	Del(ctx context.Context, key string) error
 }
