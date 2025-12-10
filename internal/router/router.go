@@ -2,10 +2,12 @@ package router
 
 import (
 	"git-register-project/internal/Database/redis"
-	handler_register "git-register-project/internal/handler/hand_register"
+	handler_comfirm_register "git-register-project/internal/handler/hand_register/confirm_register"
+	handler_register "git-register-project/internal/handler/hand_register/register"
 	"git-register-project/internal/repository"
 	serversmtp "git-register-project/internal/server_smtp"
-	"git-register-project/internal/servise/register"
+	comfirm_register "git-register-project/internal/servise/register/confirm_register"
+	"git-register-project/internal/servise/register/register"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,10 +21,12 @@ func SetupRouter(r *gin.Engine, redisClient *redis.Redis, repo repository.UserRe
 
 	// Создаём хендлер с сервисом
 	registerHandler := handler_register.NewRegister(registerService)
+	confirmService := comfirm_register.NewConfirmRegisterService(repo, mailSender, redisClient)
+	confirmRegisterHandler := handler_comfirm_register.NewConfirmRegister(confirmService)
 
 	public := r.Group("/api")
 	{
 		public.POST("/register", registerHandler.Register)
-		public.POST("/confirm_register", registerHandler.Confirm_register)
+		public.POST("/confirm_register", confirmRegisterHandler.Confirm_register)
 	}
 }

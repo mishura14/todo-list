@@ -2,7 +2,7 @@ package handler_register
 
 import (
 	"git-register-project/internal/models"
-	"git-register-project/internal/servise/register"
+	"git-register-project/internal/servise/register/register"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

@@ -1,7 +1,6 @@
 package valid_email
 
 import (
-	"net"
 	"regexp"
 	"strings"
 )
@@ -24,12 +23,5 @@ func CheckEmail(email string) bool {
 	if len(parts) != 2 {
 		return false
 	}
-
-	// Проверка домена
-	domain := parts[1]
-	if _, err := net.LookupMX(domain); err != nil {
-		return false
-	}
-
 	return true
 }

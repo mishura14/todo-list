@@ -5,6 +5,7 @@
 package mocks
 
 import (
+	context "context"
 	models "git-register-project/internal/models"
 	reflect "reflect"
 	time "time"
@@ -50,6 +51,20 @@ func (mr *MockUserRegisterMockRecorder) CheckEmailExists(email interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckEmailExists", reflect.TypeOf((*MockUserRegister)(nil).CheckEmailExists), email)
 }
 
+// ConfirmRegister mocks base method.
+func (m *MockUserRegister) ConfirmRegister(code string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ConfirmRegister", code)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ConfirmRegister indicates an expected call of ConfirmRegister.
+func (mr *MockUserRegisterMockRecorder) ConfirmRegister(code interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfirmRegister", reflect.TypeOf((*MockUserRegister)(nil).ConfirmRegister), code)
+}
+
 // CreateUser mocks base method.
 func (m *MockUserRegister) CreateUser(user *models.UserRedis) error {
 	m.ctrl.T.Helper()
@@ -62,6 +77,20 @@ func (m *MockUserRegister) CreateUser(user *models.UserRedis) error {
 func (mr *MockUserRegisterMockRecorder) CreateUser(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserRegister)(nil).CreateUser), user)
+}
+
+// Register mocks base method.
+func (m *MockUserRegister) Register(user *models.UserRedis) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Register", user)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Register indicates an expected call of Register.
+func (mr *MockUserRegisterMockRecorder) Register(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockUserRegister)(nil).Register), user)
 }
 
 // MockEmailSender is a mock of EmailSender interface.
@@ -124,31 +153,45 @@ func (m *MockRedisClient) EXPECT() *MockRedisClientMockRecorder {
 	return m.recorder
 }
 
-// Get mocks base method.
-func (m *MockRedisClient) Get(key string) ([]byte, error) {
+// Del mocks base method.
+func (m *MockRedisClient) Del(ctx context.Context, key string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", key)
+	ret := m.ctrl.Call(m, "Del", ctx, key)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Del indicates an expected call of Del.
+func (mr *MockRedisClientMockRecorder) Del(ctx, key interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Del", reflect.TypeOf((*MockRedisClient)(nil).Del), ctx, key)
+}
+
+// Get mocks base method.
+func (m *MockRedisClient) Get(ctx context.Context, key string) ([]byte, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", ctx, key)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockRedisClientMockRecorder) Get(key interface{}) *gomock.Call {
+func (mr *MockRedisClientMockRecorder) Get(ctx, key interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockRedisClient)(nil).Get), key)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockRedisClient)(nil).Get), ctx, key)
 }
 
 // Set mocks base method.
-func (m *MockRedisClient) Set(key string, value []byte, expiration time.Duration) error {
+func (m *MockRedisClient) Set(ctx context.Context, key string, value []byte, expiration time.Duration) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Set", key, value, expiration)
+	ret := m.ctrl.Call(m, "Set", ctx, key, value, expiration)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Set indicates an expected call of Set.
-func (mr *MockRedisClientMockRecorder) Set(key, value, expiration interface{}) *gomock.Call {
+func (mr *MockRedisClientMockRecorder) Set(ctx, key, value, expiration interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockRedisClient)(nil).Set), key, value, expiration)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockRedisClient)(nil).Set), ctx, key, value, expiration)
 }

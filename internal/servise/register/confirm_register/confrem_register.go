@@ -1,11 +1,26 @@
-package register
+package comfirm_register
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
 	"git-register-project/internal/models"
+	"git-register-project/internal/repository"
 )
+
+type ConfirmRegisterService struct {
+	repo  repository.UserRegister
+	mail  repository.EmailSender
+	redis repository.RedisClient
+}
+
+func NewConfirmRegisterService(repo repository.UserRegister, mail repository.EmailSender, redis repository.RedisClient) *ConfirmRegisterService {
+	return &ConfirmRegisterService{
+		repo:  repo,
+		mail:  mail,
+		redis: redis,
+	}
+}
 
 var (
 	ErrBadJSONFormat = errors.New("ошибка формата JSON")
@@ -14,7 +29,7 @@ var (
 	ErrDelCodeUser   = errors.New("ошибка удаления кода пользователя")
 )
 
-func (s *RegisterService) ConfirmRegister(code string) error {
+func (s *ConfirmRegisterService) ConfirmRegister(code string) error {
 	ctx := context.Background()
 	val, err := s.redis.Get(ctx, code)
 	if err != nil {

@@ -1,0 +1,1072 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>postgres: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">git-register-project/internal/Database/postgres/postgresDB.go (0.0%)</option>
+				
+				<option value="file1">git-register-project/internal/Database/redis/redisDB.go (0.0%)</option>
+				
+				<option value="file2">git-register-project/internal/handler/hand_register/hand_register.go (0.0%)</option>
+				
+				<option value="file3">git-register-project/internal/handler/hand_register/hand_register_confrem.go (0.0%)</option>
+				
+				<option value="file4">git-register-project/internal/repository/check_email_sql.go (0.0%)</option>
+				
+				<option value="file5">git-register-project/internal/repository/create_user_sql.go (0.0%)</option>
+				
+				<option value="file6">git-register-project/internal/repository/mocks/repository_mock.go (0.0%)</option>
+				
+				<option value="file7">git-register-project/internal/repository/postgre_user.go (0.0%)</option>
+				
+				<option value="file8">git-register-project/internal/router/router.go (0.0%)</option>
+				
+				<option value="file9">git-register-project/internal/server_smtp/smtp_main.go (0.0%)</option>
+				
+				<option value="file10">git-register-project/internal/server_smtp/smtp_register.go (0.0%)</option>
+				
+				<option value="file11">git-register-project/internal/servise/generate_code/generatec_code.go (100.0%)</option>
+				
+				<option value="file12">git-register-project/internal/servise/hash_password/check_hach_password/check_password_hash.go (100.0%)</option>
+				
+				<option value="file13">git-register-project/internal/servise/hash_password/password_hash/password_hash.go (100.0%)</option>
+				
+				<option value="file14">git-register-project/internal/servise/register/confrem_register.go (100.0%)</option>
+				
+				<option value="file15">git-register-project/internal/servise/register/register.go (91.7%)</option>
+				
+				<option value="file16">git-register-project/internal/servise/validate/valid_email/check_email.go (90.0%)</option>
+				
+				<option value="file17">git-register-project/internal/servise/validate/valid_password/check_password.go (100.0%)</option>
+				
+				<option value="file18">git-register-project/main.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package postgres
+
+import (
+        "database/sql"
+        "fmt"
+        "os"
+        "os/exec"
+        "time"
+
+        _ "github.com/lib/pq"
+)
+
+// Database хранит подключение к базе данных
+type Database struct {
+        DB *sql.DB
+}
+
+func ConnectDB() (*Database, error) <span class="cov0" title="0">{
+
+        // Параметры подключения с значениями по умолчанию
+        dbHost := getEnvOrDefault("DB_HOST", "localhost")
+        dbPort := getEnvOrDefault("DB_PORT", "5432")
+        dbUser := getEnvOrDefault("DB_USER", "postgres")
+        dbPassword := getEnvOrDefault("DB_PASSWORD", "postgres")
+        dbName := getEnvOrDefault("DB_NAME", "postgres")
+
+        connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+                dbUser, dbPassword, dbHost, dbPort, dbName)
+
+        // Пытаемся подключиться
+        db, err := sql.Open("postgres", connStr)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ошибка подключения: %v", err)
+        }</span>
+
+        // Проверяем подключение
+        <span class="cov0" title="0">if err := db.Ping(); err != nil </span><span class="cov0" title="0">{
+
+                // Запускаем контейнер
+                if err := startDB(); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка запуска БД: %v", err)
+                }</span>
+
+                // Ждем запуска
+                <span class="cov0" title="0">fmt.Println("⏳ Ожидаем запуска PostgreSQL...")
+                time.Sleep(5 * time.Second)
+
+                // Пытаемся снова
+                db, err = sql.Open("postgres", connStr)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка подключения после запуска: %v", err)
+                }</span>
+
+                <span class="cov0" title="0">if err := db.Ping(); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("не удалось подключиться к БД: %v", err)
+                }</span>
+        }
+
+        // Инициализируем структуру с подключением
+        <span class="cov0" title="0">return &amp;Database{DB: db}, nil</span>
+}
+
+func startDB() error <span class="cov0" title="0">{
+        // Проверяем есть ли контейнер
+        cmd := exec.Command("docker", "inspect", "postgres")
+        if cmd.Run() == nil </span><span class="cov0" title="0">{
+                fmt.Println("🔄 Запускаем существующий контейнер PostgreSQL...")
+                return exec.Command("docker", "start", "postgres").Run()
+        }</span>
+
+        // Создаем новый контейнер
+        <span class="cov0" title="0">fmt.Println("📦 Создаем новый контейнер PostgreSQL...")
+        cmd = exec.Command("docker", "run", "-d",
+                "--name", "postgres",
+                "-e", "POSTGRES_PASSWORD=postgres",
+                "-e", "POSTGRES_DB=postgres",
+                "-p", "5432:5432",
+                "postgres:15")
+        return cmd.Run()</span>
+}
+
+// Вспомогательная функция для получения переменной окружения с значением по умолчанию
+func getEnvOrDefault(key, defaultValue string) string <span class="cov0" title="0">{
+        if value := os.Getenv(key); value != "" </span><span class="cov0" title="0">{
+                return value
+        }</span>
+        <span class="cov0" title="0">return defaultValue</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package redis
+
+import (
+        "context"
+        "os"
+        "os/exec"
+        "time"
+
+        "github.com/redis/go-redis/v9"
+)
+
+// Redis хранит клиент Redis
+type Redis struct {
+        Client *redis.Client
+        Ctx    context.Context
+}
+
+// ConnectRedis подключается к redis и запускает если не запущен
+func ConnectRedis() (*Redis, error) <span class="cov0" title="0">{
+        redis_port := os.Getenv("REDIS_PORT")
+        if redis_port == "" </span><span class="cov0" title="0">{
+                redis_port = "localhost:6379" // default port
+        }</span>
+
+        // Создаем контекст
+        <span class="cov0" title="0">ctx := context.Background()
+
+        // Проверяем подключение
+        client := redis.NewClient(&amp;redis.Options{
+                Addr:     redis_port,
+                Password: "", // no password set
+                DB:       0,  // use default DB
+        })
+
+        // проверяем подключение
+        _, err := client.Ping(ctx).Result()
+        if err == nil </span><span class="cov0" title="0">{
+                return &amp;Redis{
+                        Client: client,
+                        Ctx:    ctx,
+                }, nil
+        }</span>
+
+        // если не удалось подключиться, запускаем redis docker
+        <span class="cov0" title="0">if err := startRedis(); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        // подключаемся снова после запуска Redis
+        <span class="cov0" title="0">_, err = client.Ping(ctx).Result()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return &amp;Redis{
+                Client: client,
+                Ctx:    ctx,
+        }, nil</span>
+}
+
+// startRedis запуск Redis в Docker
+func startRedis() error <span class="cov0" title="0">{
+        cmd := exec.Command("docker", "inspect", "redis")
+        if cmd.Run() == nil </span><span class="cov0" title="0">{
+                return exec.Command("docker", "start", "redis").Run()
+        }</span>
+        <span class="cov0" title="0">cmd = exec.Command(
+                "docker", "run", "-d",
+                "--name", "redis",
+                "-p", "6379:6379",
+                "redis:7-alpine",
+        )
+        return cmd.Run()</span>
+}
+func (r *Redis) Set(ctx context.Context, key string, value []byte, expiration time.Duration) error <span class="cov0" title="0">{
+        return r.Client.Set(ctx, key, value, expiration).Err()
+}</span>
+
+func (r *Redis) Get(ctx context.Context, key string) ([]byte, error) <span class="cov0" title="0">{
+        val, err := r.Client.Get(ctx, key).Bytes()
+        return val, err
+}</span>
+
+func (r *Redis) Del(ctx context.Context, key string) error <span class="cov0" title="0">{
+        return r.Client.Del(ctx, key).Err()
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package handler_register
+
+import (
+        "git-register-project/internal/models"
+        "git-register-project/internal/servise/register"
+        "net/http"
+
+        "github.com/gin-gonic/gin"
+)
+
+type HandlerRegister struct {
+        service *register.RegisterService
+}
+
+func NewRegister(service *register.RegisterService) *HandlerRegister <span class="cov0" title="0">{
+        return &amp;HandlerRegister{
+                service: service,
+        }
+}</span>
+
+func (h *HandlerRegister) Register(c *gin.Context) <span class="cov0" title="0">{
+        var user models.User
+        if err := c.BindJSON(&amp;user); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат запроса"})
+                return
+        }</span>
+        <span class="cov0" title="0">err := h.service.Register(&amp;user)
+        if err != nil </span><span class="cov0" title="0">{
+                switch err </span>{
+                case register.ErrBadEmailFormat:<span class="cov0" title="0">
+                        c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат email"})
+                        return</span>
+                case register.ErrEmailExists:<span class="cov0" title="0">
+                        c.JSON(http.StatusBadGateway, gin.H{"error": "email уже зарегистрирован"})
+                        return</span>
+                case register.ErrBadPasswordFormat:<span class="cov0" title="0">
+                        c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат пароля"})
+                        return</span>
+                case register.ErrHashPassword:<span class="cov0" title="0">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка хеширования пароля"})
+                        return</span>
+                case register.ErrSendConfirmation:<span class="cov0" title="0">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка отправки кода подтверждения"})
+                        return</span>
+                case register.ErrSaveRedis:<span class="cov0" title="0">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сохранения в Redis"})
+                        return</span>
+                case register.ErrSerializeUser:<span class="cov0" title="0">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сериализации пользователя"})
+                        return</span>
+                case register.ErrCheckEmailInDB:<span class="cov0" title="0">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка проверки email в базе данных"})
+                        return</span>
+
+                }
+        }
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"message": "код регистрации отправлен на email (активен 5 минут)"})</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package handler_register
+
+import (
+        "git-register-project/internal/models"
+        "git-register-project/internal/servise/register"
+        "net/http"
+
+        "github.com/gin-gonic/gin"
+)
+
+// обработчик подтверждения регистрации
+func (h *HandlerRegister) Confirm_register(c *gin.Context) <span class="cov0" title="0">{
+        var code models.CodeUser
+        //получение и обработка кода подтверждения регистрации
+        if err := c.BindJSON(&amp;code); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат кода"})
+                return
+        }</span>
+        <span class="cov0" title="0">err := h.service.ConfirmRegister(code.Code)
+        if err != nil </span><span class="cov0" title="0">{
+                switch err </span>{
+                case register.ErrBadJSONFormat:<span class="cov0" title="0">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка обработки JSON"})
+                        return</span>
+                case register.ErrCodeTimeout:<span class="cov0" title="0">
+                        c.JSON(http.StatusBadRequest, gin.H{"error": "код подтверждения устарел"})
+                        return</span>
+                case register.ErrCreateUser:<span class="cov0" title="0">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка создания пользователя"})
+                        return</span>
+                case register.ErrDelCodeUser:<span class="cov0" title="0">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка удаления кода подтверждения"})
+                        return</span>
+                }
+        }
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"message": "регистрация успешно завершена"})</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package repository
+
+import (
+        "context"
+)
+
+// запрос в базу данных проверки существования email
+func (r *PostgreUser) CheckEmailExists(email string) (bool, error) <span class="cov0" title="0">{
+        var exists bool
+        err := r.db.QueryRowContext(context.Background(),
+                `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`, email).Scan(&amp;exists)
+        return exists, err
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package repository
+
+import (
+        "context"
+        "git-register-project/internal/models"
+)
+
+// запрос создания пользователя в бд
+func (r *PostgreUser) CreateUser(user *models.UserRedis) error <span class="cov0" title="0">{
+        _, err := r.db.ExecContext(context.Background(),
+                `INSERT INTO users (name, email, password_hash) VALUES ($1,$2,$3)`,
+                user.Name, user.Email, user.Password)
+        return err
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: repository.go
+
+// Package mocks is a generated GoMock package.
+package mocks
+
+import (
+        context "context"
+        models "git-register-project/internal/models"
+        reflect "reflect"
+        time "time"
+
+        gomock "github.com/golang/mock/gomock"
+)
+
+// MockUserRegister is a mock of UserRegister interface.
+type MockUserRegister struct {
+        ctrl     *gomock.Controller
+        recorder *MockUserRegisterMockRecorder
+}
+
+// MockUserRegisterMockRecorder is the mock recorder for MockUserRegister.
+type MockUserRegisterMockRecorder struct {
+        mock *MockUserRegister
+}
+
+// NewMockUserRegister creates a new mock instance.
+func NewMockUserRegister(ctrl *gomock.Controller) *MockUserRegister <span class="cov0" title="0">{
+        mock := &amp;MockUserRegister{ctrl: ctrl}
+        mock.recorder = &amp;MockUserRegisterMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockUserRegister) EXPECT() *MockUserRegisterMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// CheckEmailExists mocks base method.
+func (m *MockUserRegister) CheckEmailExists(email string) (bool, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "CheckEmailExists", email)
+        ret0, _ := ret[0].(bool)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// CheckEmailExists indicates an expected call of CheckEmailExists.
+func (mr *MockUserRegisterMockRecorder) CheckEmailExists(email interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckEmailExists", reflect.TypeOf((*MockUserRegister)(nil).CheckEmailExists), email)
+}</span>
+
+// ConfirmRegister mocks base method.
+func (m *MockUserRegister) ConfirmRegister(code string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "ConfirmRegister", code)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// ConfirmRegister indicates an expected call of ConfirmRegister.
+func (mr *MockUserRegisterMockRecorder) ConfirmRegister(code interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfirmRegister", reflect.TypeOf((*MockUserRegister)(nil).ConfirmRegister), code)
+}</span>
+
+// CreateUser mocks base method.
+func (m *MockUserRegister) CreateUser(user *models.UserRedis) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "CreateUser", user)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// CreateUser indicates an expected call of CreateUser.
+func (mr *MockUserRegisterMockRecorder) CreateUser(user interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserRegister)(nil).CreateUser), user)
+}</span>
+
+// Register mocks base method.
+func (m *MockUserRegister) Register(user *models.UserRedis) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Register", user)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Register indicates an expected call of Register.
+func (mr *MockUserRegisterMockRecorder) Register(user interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockUserRegister)(nil).Register), user)
+}</span>
+
+// MockEmailSender is a mock of EmailSender interface.
+type MockEmailSender struct {
+        ctrl     *gomock.Controller
+        recorder *MockEmailSenderMockRecorder
+}
+
+// MockEmailSenderMockRecorder is the mock recorder for MockEmailSender.
+type MockEmailSenderMockRecorder struct {
+        mock *MockEmailSender
+}
+
+// NewMockEmailSender creates a new mock instance.
+func NewMockEmailSender(ctrl *gomock.Controller) *MockEmailSender <span class="cov0" title="0">{
+        mock := &amp;MockEmailSender{ctrl: ctrl}
+        mock.recorder = &amp;MockEmailSenderMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockEmailSender) EXPECT() *MockEmailSenderMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// SendConfremRegister mocks base method.
+func (m *MockEmailSender) SendConfremRegister(toEmail, code string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "SendConfremRegister", toEmail, code)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// SendConfremRegister indicates an expected call of SendConfremRegister.
+func (mr *MockEmailSenderMockRecorder) SendConfremRegister(toEmail, code interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendConfremRegister", reflect.TypeOf((*MockEmailSender)(nil).SendConfremRegister), toEmail, code)
+}</span>
+
+// MockRedisClient is a mock of RedisClient interface.
+type MockRedisClient struct {
+        ctrl     *gomock.Controller
+        recorder *MockRedisClientMockRecorder
+}
+
+// MockRedisClientMockRecorder is the mock recorder for MockRedisClient.
+type MockRedisClientMockRecorder struct {
+        mock *MockRedisClient
+}
+
+// NewMockRedisClient creates a new mock instance.
+func NewMockRedisClient(ctrl *gomock.Controller) *MockRedisClient <span class="cov0" title="0">{
+        mock := &amp;MockRedisClient{ctrl: ctrl}
+        mock.recorder = &amp;MockRedisClientMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockRedisClient) EXPECT() *MockRedisClientMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// Del mocks base method.
+func (m *MockRedisClient) Del(ctx context.Context, key string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Del", ctx, key)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Del indicates an expected call of Del.
+func (mr *MockRedisClientMockRecorder) Del(ctx, key interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Del", reflect.TypeOf((*MockRedisClient)(nil).Del), ctx, key)
+}</span>
+
+// Get mocks base method.
+func (m *MockRedisClient) Get(ctx context.Context, key string) ([]byte, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Get", ctx, key)
+        ret0, _ := ret[0].([]byte)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// Get indicates an expected call of Get.
+func (mr *MockRedisClientMockRecorder) Get(ctx, key interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockRedisClient)(nil).Get), ctx, key)
+}</span>
+
+// Set mocks base method.
+func (m *MockRedisClient) Set(ctx context.Context, key string, value []byte, expiration time.Duration) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Set", ctx, key, value, expiration)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Set indicates an expected call of Set.
+func (mr *MockRedisClientMockRecorder) Set(ctx, key, value, expiration interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockRedisClient)(nil).Set), ctx, key, value, expiration)
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package repository
+
+import (
+        "database/sql"
+)
+
+type PostgreUser struct {
+        db *sql.DB
+}
+
+func NewPostgreUser(db *sql.DB) *PostgreUser <span class="cov0" title="0">{
+        return &amp;PostgreUser{db: db}
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package router
+
+import (
+        "git-register-project/internal/Database/redis"
+        handler_register "git-register-project/internal/handler/hand_register"
+        "git-register-project/internal/repository"
+        serversmtp "git-register-project/internal/server_smtp"
+        "git-register-project/internal/servise/register"
+
+        "github.com/gin-gonic/gin"
+)
+
+func SetupRouter(r *gin.Engine, redisClient *redis.Redis, repo repository.UserRegister) <span class="cov0" title="0">{
+        // Создаём SMTP-сервис
+        mailSender := serversmtp.NewSMTPSender()
+
+        // Создаём сервис регистрации (с бизнес-логикой)
+        registerService := register.NewRegisterService(repo, mailSender, redisClient)
+
+        // Создаём хендлер с сервисом
+        registerHandler := handler_register.NewRegister(registerService)
+
+        public := r.Group("/api")
+        </span><span class="cov0" title="0">{
+                public.POST("/register", registerHandler.Register)
+                public.POST("/confirm_register", registerHandler.Confirm_register)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package serversmtp
+
+import (
+        "os"
+        "strconv"
+        "time"
+
+        mail "github.com/xhit/go-simple-mail/v2"
+)
+
+// создание подключение к SMTP серверу
+func getSMTPClient() (*mail.SMTPClient, error) <span class="cov0" title="0">{
+        server := mail.NewSMTPClient()
+
+        // Получаем настройки SMTP из переменных окружения
+        server.Host = getEnvOrDefault("SMTP_HOST", "smtp.gmail.com")
+
+        port := getEnvOrDefault("SMTP_PORT", "587")
+        if p, err := strconv.Atoi(port); err == nil </span><span class="cov0" title="0">{
+                server.Port = p
+        }</span> else<span class="cov0" title="0"> {
+                server.Port = 587
+        }</span>
+
+        <span class="cov0" title="0">server.Username = getEnvOrDefault("SMTP_EMAIL", "")
+        server.Password = getEnvOrDefault("SMTP_PASSWORD", "")
+        server.Encryption = mail.EncryptionSTARTTLS
+        server.Authentication = mail.AuthLogin
+        server.ConnectTimeout = 10 * time.Second
+        server.SendTimeout = 10 * time.Second
+        return server.Connect()</span>
+}
+
+// Вспомогательная функция для получения переменной окружения с значением по умолчанию
+func getEnvOrDefault(key, defaultValue string) string <span class="cov0" title="0">{
+        if value := os.Getenv(key); value != "" </span><span class="cov0" title="0">{
+                return value
+        }</span>
+        <span class="cov0" title="0">return defaultValue</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package serversmtp
+
+import (
+        "fmt"
+
+        mail "github.com/xhit/go-simple-mail/v2"
+)
+
+type SMTPSender struct{}
+
+func NewSMTPSender() *SMTPSender <span class="cov0" title="0">{
+        return &amp;SMTPSender{}
+}</span>
+
+// функция для отправки кода подтверждения регистрации на email
+func (s *SMTPSender) SendConfremRegister(toEmail, code string) error <span class="cov0" title="0">{
+        smtpClient, err := getSMTPClient()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">defer smtpClient.Close()
+
+        email := mail.NewMSG()
+        fromEmail := getEnvOrDefault("SMTP_EMAIL", "misuraaleksej60@gmail.com")
+        email.SetFrom(fromEmail).
+                AddTo(toEmail).
+                SetSubject("Код подтверждения регистрации").
+                SetBody(mail.TextHTML, generateEmailHTML(code))
+
+        if email.Error != nil </span><span class="cov0" title="0">{
+                return email.Error
+        }</span>
+
+        <span class="cov0" title="0">return email.Send(smtpClient)</span>
+}
+
+// generateEmailHTML создает простой HTML для письма
+func generateEmailHTML(code string) string <span class="cov0" title="0">{
+        return fmt.Sprintf(`
+&lt;div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"&gt;
+    &lt;h2 style="color: #333; text-align: center;"&gt;Код подтверждения регистрации&lt;/h2&gt;
+
+    &lt;p&gt;Для завершения регистрации введите этот код в приложении:&lt;/p&gt;
+
+    &lt;div style="background: #f5f5f5; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;"&gt;
+        &lt;div style="font-size: 32px; font-weight: bold; color: #2c5aa0; letter-spacing: 5px;"&gt;
+            %s
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;p style="color: #666; font-size: 14px;"&gt;
+        Код действителен в течение 5 минут.&lt;br&gt;
+        Если вы не запрашивали регистрацию, проигнорируйте это письмо.
+    &lt;/p&gt;
+&lt;/div&gt;
+`, code)
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package generate_code
+
+import (
+        "crypto/rand"
+        "fmt"
+        "math/big"
+)
+
+// генератор кода подтверждения
+func GenerateSecureCode() string <span class="cov8" title="1">{
+        n, _ := rand.Int(rand.Reader, big.NewInt(900000))
+        code := n.Int64() + 100000
+        return fmt.Sprintf("%06d", code)
+}</span>
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package check_hash_password
+
+import "golang.org/x/crypto/bcrypt"
+
+// проверка хешированого пароля с не хешированым
+func CheckPasswordHash(password, hash string) bool <span class="cov8" title="1">{
+        err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+        return err == nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package password_hash
+
+import "golang.org/x/crypto/bcrypt"
+
+// хеширование пароля
+func HashPassword(password string) (string, error) <span class="cov8" title="1">{
+        bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+        return string(bytes), err
+}</span>
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package register
+
+import (
+        "context"
+        "encoding/json"
+        "errors"
+        "git-register-project/internal/models"
+)
+
+var (
+        ErrBadJSONFormat = errors.New("ошибка формата JSON")
+        ErrCodeTimeout   = errors.New("время кода истекло")
+        ErrCreateUser    = errors.New("ошибка создания пользователя")
+        ErrDelCodeUser   = errors.New("ошибка удаления кода пользователя")
+)
+
+func (s *RegisterService) ConfirmRegister(code string) error <span class="cov8" title="1">{
+        ctx := context.Background()
+        val, err := s.redis.Get(ctx, code)
+        if err != nil </span><span class="cov8" title="1">{
+                return ErrCodeTimeout
+        }</span>
+        <span class="cov8" title="1">var user_from_redis models.UserRedis
+        if err := json.Unmarshal([]byte(val), &amp;user_from_redis); err != nil </span><span class="cov8" title="1">{
+                return ErrBadJSONFormat
+        }</span>
+        <span class="cov8" title="1">err = s.repo.CreateUser(&amp;models.UserRedis{
+                Name:     user_from_redis.Name,
+                Email:    user_from_redis.Email,
+                Password: user_from_redis.Password,
+        })
+        if err != nil </span><span class="cov8" title="1">{
+                return ErrCreateUser
+        }</span>
+        <span class="cov8" title="1">err = s.redis.Del(ctx, code)
+        if err != nil </span><span class="cov8" title="1">{
+                return ErrDelCodeUser
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package register
+
+import (
+        "context"
+        "encoding/json"
+        "errors"
+        "git-register-project/internal/models"
+        "git-register-project/internal/repository"
+        "git-register-project/internal/servise/generate_code"
+        "git-register-project/internal/servise/hash_password/password_hash"
+        "git-register-project/internal/servise/validate/valid_email"
+        "git-register-project/internal/servise/validate/valid_password"
+        "time"
+)
+
+type RegisterService struct {
+        repo  repository.UserRegister
+        mail  repository.EmailSender
+        redis repository.RedisClient
+}
+
+func NewRegisterService(repo repository.UserRegister, mail repository.EmailSender, redis repository.RedisClient) *RegisterService <span class="cov8" title="1">{
+        return &amp;RegisterService{
+                repo:  repo,
+                mail:  mail,
+                redis: redis,
+        }
+}</span>
+
+var (
+        ErrBadEmailFormat    = errors.New("неверный формат email")
+        ErrEmailExists       = errors.New("email уже зарегистрирован")
+        ErrBadPasswordFormat = errors.New("пароль не соответствует требованиям")
+        ErrHashPassword      = errors.New("ошибка хеширования пароля")
+        ErrSendConfirmation  = errors.New("не удалось отправить письмо")
+        ErrSaveRedis         = errors.New("ошибка сохранения в redis")
+        ErrSerializeUser     = errors.New("ошибка сериализации пользователя")
+        ErrCheckEmailInDB    = errors.New("ошибка проверки email в базе")
+)
+
+func (s *RegisterService) Register(user *models.User) error <span class="cov8" title="1">{
+        ctx := context.Background()
+        // формат email
+        if !valid_email.CheckEmail(user.Email) </span><span class="cov8" title="1">{
+                return ErrBadEmailFormat
+        }</span>
+
+        // существует в БД?
+        <span class="cov8" title="1">exists, err := s.repo.CheckEmailExists(user.Email)
+        if err != nil </span><span class="cov8" title="1">{
+                return ErrCheckEmailInDB
+        }</span>
+
+        <span class="cov8" title="1">if exists </span><span class="cov8" title="1">{
+                return ErrEmailExists
+        }</span>
+
+        // проверка пароля
+        <span class="cov8" title="1">if !valid_password.CheckPassword(user.Password) </span><span class="cov8" title="1">{
+                return ErrBadPasswordFormat
+        }</span>
+
+        // хеш
+        <span class="cov8" title="1">hash, err := password_hash.HashPassword(user.Password)
+        if err != nil </span><span class="cov0" title="0">{
+                return ErrHashPassword
+        }</span>
+
+        // код
+        <span class="cov8" title="1">code := generate_code.GenerateSecureCode()
+
+        if err := s.mail.SendConfremRegister(user.Email, code); err != nil </span><span class="cov8" title="1">{
+                return ErrSendConfirmation
+        }</span>
+
+        // упаковываем в Redis объект
+        <span class="cov8" title="1">userRedis := models.UserRedis{
+                Name:     user.Name,
+                Email:    user.Email,
+                Password: hash,
+                Code:     code,
+        }
+
+        jsonData, err := json.Marshal(userRedis)
+        if err != nil </span><span class="cov0" title="0">{
+                return ErrSerializeUser
+        }</span>
+
+        // сохраняем в Redis
+        <span class="cov8" title="1">if err := s.redis.Set(ctx, code, jsonData, 5*time.Minute); err != nil </span><span class="cov8" title="1">{
+                return ErrSaveRedis
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package valid_email
+
+import (
+        "regexp"
+        "strings"
+)
+
+func CheckEmail(email string) bool <span class="cov8" title="1">{
+        // Проверка длины
+        if len(email) &lt; 3 || len(email) &gt; 254 </span><span class="cov8" title="1">{
+                return false
+        }</span>
+
+        // Проверка формата
+        <span class="cov8" title="1">pattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+        matched, _ := regexp.MatchString(pattern, email)
+        if !matched </span><span class="cov8" title="1">{
+                return false
+        }</span>
+
+        // Проверка что есть домен
+        <span class="cov8" title="1">parts := strings.Split(email, "@")
+        if len(parts) != 2 </span><span class="cov0" title="0">{
+                return false
+        }</span>
+        <span class="cov8" title="1">return true</span>
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package valid_password
+
+import "unicode"
+
+// проверка пароля на наличие цифр
+func ContainsDigits(s string) bool <span class="cov8" title="1">{
+        for _, r := range s </span><span class="cov8" title="1">{
+                if unicode.IsDigit(r) </span><span class="cov8" title="1">{
+                        return true
+                }</span>
+        }
+        <span class="cov8" title="1">return false</span>
+}
+
+// проверка пароля на наличие спецсимволов
+func ContainsSpecialChars(s string) bool <span class="cov8" title="1">{
+        for _, r := range s </span><span class="cov8" title="1">{
+                if !unicode.IsLetter(r) &amp;&amp; !unicode.IsDigit(r) </span><span class="cov8" title="1">{
+                        return true
+                }</span>
+        }
+        <span class="cov8" title="1">return false</span>
+}
+
+// проверка пароля на длину
+func CheckPassword(s string) bool <span class="cov8" title="1">{
+        return len(s) &gt;= 8 &amp;&amp; ContainsDigits(s) &amp;&amp; ContainsSpecialChars(s)
+}</span>
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package main
+
+import (
+        "fmt"
+        "git-register-project/internal/Database/postgres"
+        "git-register-project/internal/Database/redis"
+        "git-register-project/internal/repository"
+        "git-register-project/internal/router"
+        "log"
+        "os"
+
+        "github.com/gin-gonic/gin"
+        "github.com/joho/godotenv"
+)
+
+func main() <span class="cov0" title="0">{
+        if err := godotenv.Load(".env"); err != nil </span><span class="cov0" title="0">{
+                log.Printf("⚠️  .env файл не найден: %v", err)
+        }</span> else<span class="cov0" title="0"> {
+                fmt.Println("Connected .env")
+        }</span>
+        //подключение  postgresql
+        <span class="cov0" title="0">db, err := postgres.ConnectDB()
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov0" title="0">defer db.DB.Close()
+        fmt.Println("Connected postgres")
+
+        //подключение redis
+        rdb, err := redis.ConnectRedis()
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov0" title="0">defer rdb.Client.Close()
+        fmt.Println("Connection Redis")
+        var repo repository.UserRegister = repository.NewPostgreUser(db.DB)
+        r := gin.Default()
+        router.SetupRouter(r, rdb, repo)
+
+        // Получаем порт из .env или используем по умолчанию
+        port := os.Getenv("APP_PORT")
+        r.Run(":" + port)</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

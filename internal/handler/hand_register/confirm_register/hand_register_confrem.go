@@ -1,15 +1,25 @@
-package handler_register
+package handler_comfirm_register
 
 import (
 	"git-register-project/internal/models"
-	"git-register-project/internal/servise/register"
+	comfirm_register "git-register-project/internal/servise/register/confirm_register"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
+type HandlerConfirmRegister struct {
+	service *comfirm_register.ConfirmRegisterService
+}
+
+func NewConfirmRegister(service *comfirm_register.ConfirmRegisterService) *HandlerConfirmRegister {
+	return &HandlerConfirmRegister{
+		service: service,
+	}
+}
+
 // обработчик подтверждения регистрации
-func (h *HandlerRegister) Confirm_register(c *gin.Context) {
+func (h *HandlerConfirmRegister) Confirm_register(c *gin.Context) {
 	var code models.CodeUser
 	//получение и обработка кода подтверждения регистрации
 	if err := c.BindJSON(&code); err != nil {
@@ -19,16 +29,16 @@ func (h *HandlerRegister) Confirm_register(c *gin.Context) {
 	err := h.service.ConfirmRegister(code.Code)
 	if err != nil {
 		switch err {
-		case register.ErrBadJSONFormat:
+		case comfirm_register.ErrBadJSONFormat:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка обработки JSON"})
 			return
-		case register.ErrCodeTimeout:
+		case comfirm_register.ErrCodeTimeout:
 			c.JSON(http.StatusBadRequest, gin.H{"error": "код подтверждения устарел"})
 			return
-		case register.ErrCreateUser:
+		case comfirm_register.ErrCreateUser:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка создания пользователя"})
 			return
-		case register.ErrDelCodeUser:
+		case comfirm_register.ErrDelCodeUser:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка удаления кода подтверждения"})
 			return
 		}
