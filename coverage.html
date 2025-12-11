@@ -59,9 +59,9 @@
 				
 				<option value="file1">git-register-project/internal/Database/redis/redisDB.go (0.0%)</option>
 				
-				<option value="file2">git-register-project/internal/handler/hand_register/hand_register.go (0.0%)</option>
+				<option value="file2">git-register-project/internal/handler/hand_register/confirm_register/hand_register_confrem.go (88.2%)</option>
 				
-				<option value="file3">git-register-project/internal/handler/hand_register/hand_register_confrem.go (0.0%)</option>
+				<option value="file3">git-register-project/internal/handler/hand_register/register/hand_register.go (68.0%)</option>
 				
 				<option value="file4">git-register-project/internal/repository/check_email_sql.go (0.0%)</option>
 				
@@ -83,9 +83,9 @@
 				
 				<option value="file13">git-register-project/internal/servise/hash_password/password_hash/password_hash.go (100.0%)</option>
 				
-				<option value="file14">git-register-project/internal/servise/register/confrem_register.go (100.0%)</option>
+				<option value="file14">git-register-project/internal/servise/register/confirm_register/confrem_register.go (100.0%)</option>
 				
-				<option value="file15">git-register-project/internal/servise/register/register.go (91.7%)</option>
+				<option value="file15">git-register-project/internal/servise/register/register/register.go (91.7%)</option>
 				
 				<option value="file16">git-register-project/internal/servise/validate/valid_email/check_email.go (90.0%)</option>
 				
@@ -283,11 +283,60 @@ func (r *Redis) Del(ctx context.Context, key string) error <span class="cov0" ti
 }</span>
 </pre>
 		
-		<pre class="file" id="file2" style="display: none">package handler_register
+		<pre class="file" id="file2" style="display: none">package handler_comfirm_register
 
 import (
         "git-register-project/internal/models"
-        "git-register-project/internal/servise/register"
+        comfirm_register "git-register-project/internal/servise/register/confirm_register"
+        "net/http"
+
+        "github.com/gin-gonic/gin"
+)
+
+type HandlerConfirmRegister struct {
+        service *comfirm_register.ConfirmRegisterService
+}
+
+func NewConfirmRegister(service *comfirm_register.ConfirmRegisterService) *HandlerConfirmRegister <span class="cov8" title="1">{
+        return &amp;HandlerConfirmRegister{
+                service: service,
+        }
+}</span>
+
+// обработчик подтверждения регистрации
+func (h *HandlerConfirmRegister) Confirm_register(c *gin.Context) <span class="cov8" title="1">{
+        var code models.CodeUser
+        //получение и обработка кода подтверждения регистрации
+        if err := c.BindJSON(&amp;code); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат кода"})
+                return
+        }</span>
+        <span class="cov8" title="1">err := h.service.ConfirmRegister(code.Code)
+        if err != nil </span><span class="cov8" title="1">{
+                switch err </span>{
+                case comfirm_register.ErrBadJSONFormat:<span class="cov8" title="1">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка обработки JSON"})
+                        return</span>
+                case comfirm_register.ErrCodeTimeout:<span class="cov8" title="1">
+                        c.JSON(http.StatusBadRequest, gin.H{"error": "код подтверждения устарел"})
+                        return</span>
+                case comfirm_register.ErrCreateUser:<span class="cov8" title="1">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка создания пользователя"})
+                        return</span>
+                case comfirm_register.ErrDelCodeUser:<span class="cov8" title="1">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка удаления кода подтверждения"})
+                        return</span>
+                }
+        }
+        <span class="cov8" title="1">c.JSON(http.StatusOK, gin.H{"message": "регистрация успешно завершена"})</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package handler_register
+
+import (
+        "git-register-project/internal/models"
+        "git-register-project/internal/servise/register/register"
         "net/http"
 
         "github.com/gin-gonic/gin"
@@ -297,88 +346,49 @@ type HandlerRegister struct {
         service *register.RegisterService
 }
 
-func NewRegister(service *register.RegisterService) *HandlerRegister <span class="cov0" title="0">{
+func NewRegister(service *register.RegisterService) *HandlerRegister <span class="cov8" title="1">{
         return &amp;HandlerRegister{
                 service: service,
         }
 }</span>
 
-func (h *HandlerRegister) Register(c *gin.Context) <span class="cov0" title="0">{
+func (h *HandlerRegister) Register(c *gin.Context) <span class="cov8" title="1">{
         var user models.User
         if err := c.BindJSON(&amp;user); err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат запроса"})
                 return
         }</span>
-        <span class="cov0" title="0">err := h.service.Register(&amp;user)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">err := h.service.Register(&amp;user)
+        if err != nil </span><span class="cov8" title="1">{
                 switch err </span>{
-                case register.ErrBadEmailFormat:<span class="cov0" title="0">
+                case register.ErrBadEmailFormat:<span class="cov8" title="1">
                         c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат email"})
                         return</span>
-                case register.ErrEmailExists:<span class="cov0" title="0">
-                        c.JSON(http.StatusBadGateway, gin.H{"error": "email уже зарегистрирован"})
+                case register.ErrEmailExists:<span class="cov8" title="1">
+                        c.JSON(http.StatusConflict, gin.H{"error": "email уже зарегистрирован"})
                         return</span>
-                case register.ErrBadPasswordFormat:<span class="cov0" title="0">
-                        c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат пароля"})
+                case register.ErrBadPasswordFormat:<span class="cov8" title="1">
+                        c.JSON(http.StatusBadRequest, gin.H{"error": "пароль не соответствует требованиям"})
                         return</span>
                 case register.ErrHashPassword:<span class="cov0" title="0">
                         c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка хеширования пароля"})
                         return</span>
-                case register.ErrSendConfirmation:<span class="cov0" title="0">
-                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка отправки кода подтверждения"})
+                case register.ErrSendConfirmation:<span class="cov8" title="1">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "не удалось отправить письмо"})
                         return</span>
-                case register.ErrSaveRedis:<span class="cov0" title="0">
-                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сохранения в Redis"})
+                case register.ErrSaveRedis:<span class="cov8" title="1">
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сохранения в redis"})
                         return</span>
                 case register.ErrSerializeUser:<span class="cov0" title="0">
-                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сериализации пользователя"})
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сериализации пользовател"})
                         return</span>
                 case register.ErrCheckEmailInDB:<span class="cov0" title="0">
-                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка проверки email в базе данных"})
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка проверки email в базе"})
                         return</span>
 
                 }
         }
-        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"message": "код регистрации отправлен на email (активен 5 минут)"})</span>
-}
-</pre>
-		
-		<pre class="file" id="file3" style="display: none">package handler_register
-
-import (
-        "git-register-project/internal/models"
-        "git-register-project/internal/servise/register"
-        "net/http"
-
-        "github.com/gin-gonic/gin"
-)
-
-// обработчик подтверждения регистрации
-func (h *HandlerRegister) Confirm_register(c *gin.Context) <span class="cov0" title="0">{
-        var code models.CodeUser
-        //получение и обработка кода подтверждения регистрации
-        if err := c.BindJSON(&amp;code); err != nil </span><span class="cov0" title="0">{
-                c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат кода"})
-                return
-        }</span>
-        <span class="cov0" title="0">err := h.service.ConfirmRegister(code.Code)
-        if err != nil </span><span class="cov0" title="0">{
-                switch err </span>{
-                case register.ErrBadJSONFormat:<span class="cov0" title="0">
-                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка обработки JSON"})
-                        return</span>
-                case register.ErrCodeTimeout:<span class="cov0" title="0">
-                        c.JSON(http.StatusBadRequest, gin.H{"error": "код подтверждения устарел"})
-                        return</span>
-                case register.ErrCreateUser:<span class="cov0" title="0">
-                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка создания пользователя"})
-                        return</span>
-                case register.ErrDelCodeUser:<span class="cov0" title="0">
-                        c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка удаления кода подтверждения"})
-                        return</span>
-                }
-        }
-        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"message": "регистрация успешно завершена"})</span>
+        <span class="cov8" title="1">c.JSON(http.StatusOK, gin.H{"message": "код регистрации отправлен на email (активен 5 минут)"})</span>
 }
 </pre>
 		
@@ -466,20 +476,6 @@ func (mr *MockUserRegisterMockRecorder) CheckEmailExists(email interface{}) *gom
         return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckEmailExists", reflect.TypeOf((*MockUserRegister)(nil).CheckEmailExists), email)
 }</span>
 
-// ConfirmRegister mocks base method.
-func (m *MockUserRegister) ConfirmRegister(code string) error <span class="cov0" title="0">{
-        m.ctrl.T.Helper()
-        ret := m.ctrl.Call(m, "ConfirmRegister", code)
-        ret0, _ := ret[0].(error)
-        return ret0
-}</span>
-
-// ConfirmRegister indicates an expected call of ConfirmRegister.
-func (mr *MockUserRegisterMockRecorder) ConfirmRegister(code interface{}) *gomock.Call <span class="cov0" title="0">{
-        mr.mock.ctrl.T.Helper()
-        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfirmRegister", reflect.TypeOf((*MockUserRegister)(nil).ConfirmRegister), code)
-}</span>
-
 // CreateUser mocks base method.
 func (m *MockUserRegister) CreateUser(user *models.UserRedis) error <span class="cov0" title="0">{
         m.ctrl.T.Helper()
@@ -492,20 +488,6 @@ func (m *MockUserRegister) CreateUser(user *models.UserRedis) error <span class=
 func (mr *MockUserRegisterMockRecorder) CreateUser(user interface{}) *gomock.Call <span class="cov0" title="0">{
         mr.mock.ctrl.T.Helper()
         return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserRegister)(nil).CreateUser), user)
-}</span>
-
-// Register mocks base method.
-func (m *MockUserRegister) Register(user *models.UserRedis) error <span class="cov0" title="0">{
-        m.ctrl.T.Helper()
-        ret := m.ctrl.Call(m, "Register", user)
-        ret0, _ := ret[0].(error)
-        return ret0
-}</span>
-
-// Register indicates an expected call of Register.
-func (mr *MockUserRegisterMockRecorder) Register(user interface{}) *gomock.Call <span class="cov0" title="0">{
-        mr.mock.ctrl.T.Helper()
-        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockUserRegister)(nil).Register), user)
 }</span>
 
 // MockEmailSender is a mock of EmailSender interface.
@@ -610,6 +592,44 @@ func (mr *MockRedisClientMockRecorder) Set(ctx, key, value, expiration interface
         mr.mock.ctrl.T.Helper()
         return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockRedisClient)(nil).Set), ctx, key, value, expiration)
 }</span>
+
+// MockPasswordHasher is a mock of PasswordHasher interface.
+type MockPasswordHasher struct {
+        ctrl     *gomock.Controller
+        recorder *MockPasswordHasherMockRecorder
+}
+
+// MockPasswordHasherMockRecorder is the mock recorder for MockPasswordHasher.
+type MockPasswordHasherMockRecorder struct {
+        mock *MockPasswordHasher
+}
+
+// NewMockPasswordHasher creates a new mock instance.
+func NewMockPasswordHasher(ctrl *gomock.Controller) *MockPasswordHasher <span class="cov0" title="0">{
+        mock := &amp;MockPasswordHasher{ctrl: ctrl}
+        mock.recorder = &amp;MockPasswordHasherMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPasswordHasher) EXPECT() *MockPasswordHasherMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// HashPassword mocks base method.
+func (m *MockPasswordHasher) HashPassword(pwd string) (string, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "HashPassword", pwd)
+        ret0, _ := ret[0].(string)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// HashPassword indicates an expected call of HashPassword.
+func (mr *MockPasswordHasherMockRecorder) HashPassword(pwd interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HashPassword", reflect.TypeOf((*MockPasswordHasher)(nil).HashPassword), pwd)
+}</span>
 </pre>
 		
 		<pre class="file" id="file7" style="display: none">package repository
@@ -631,10 +651,12 @@ func NewPostgreUser(db *sql.DB) *PostgreUser <span class="cov0" title="0">{
 
 import (
         "git-register-project/internal/Database/redis"
-        handler_register "git-register-project/internal/handler/hand_register"
+        handler_comfirm_register "git-register-project/internal/handler/hand_register/confirm_register"
+        handler_register "git-register-project/internal/handler/hand_register/register"
         "git-register-project/internal/repository"
         serversmtp "git-register-project/internal/server_smtp"
-        "git-register-project/internal/servise/register"
+        comfirm_register "git-register-project/internal/servise/register/confirm_register"
+        "git-register-project/internal/servise/register/register"
 
         "github.com/gin-gonic/gin"
 )
@@ -648,11 +670,13 @@ func SetupRouter(r *gin.Engine, redisClient *redis.Redis, repo repository.UserRe
 
         // Создаём хендлер с сервисом
         registerHandler := handler_register.NewRegister(registerService)
+        confirmService := comfirm_register.NewConfirmRegisterService(repo, mailSender, redisClient)
+        confirmRegisterHandler := handler_comfirm_register.NewConfirmRegister(confirmService)
 
         public := r.Group("/api")
         </span><span class="cov0" title="0">{
                 public.POST("/register", registerHandler.Register)
-                public.POST("/confirm_register", registerHandler.Confirm_register)
+                public.POST("/confirm_register", confirmRegisterHandler.Confirm_register)
         }</span>
 }
 </pre>
@@ -796,14 +820,29 @@ func HashPassword(password string) (string, error) <span class="cov8" title="1">
 }</span>
 </pre>
 		
-		<pre class="file" id="file14" style="display: none">package register
+		<pre class="file" id="file14" style="display: none">package comfirm_register
 
 import (
         "context"
         "encoding/json"
         "errors"
         "git-register-project/internal/models"
+        "git-register-project/internal/repository"
 )
+
+type ConfirmRegisterService struct {
+        repo  repository.UserRegister
+        mail  repository.EmailSender
+        redis repository.RedisClient
+}
+
+func NewConfirmRegisterService(repo repository.UserRegister, mail repository.EmailSender, redis repository.RedisClient) *ConfirmRegisterService <span class="cov8" title="1">{
+        return &amp;ConfirmRegisterService{
+                repo:  repo,
+                mail:  mail,
+                redis: redis,
+        }
+}</span>
 
 var (
         ErrBadJSONFormat = errors.New("ошибка формата JSON")
@@ -812,7 +851,7 @@ var (
         ErrDelCodeUser   = errors.New("ошибка удаления кода пользователя")
 )
 
-func (s *RegisterService) ConfirmRegister(code string) error <span class="cov8" title="1">{
+func (s *ConfirmRegisterService) ConfirmRegister(code string) error <span class="cov8" title="1">{
         ctx := context.Background()
         val, err := s.redis.Get(ctx, code)
         if err != nil </span><span class="cov8" title="1">{

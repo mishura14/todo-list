@@ -51,20 +51,6 @@ func (mr *MockUserRegisterMockRecorder) CheckEmailExists(email interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckEmailExists", reflect.TypeOf((*MockUserRegister)(nil).CheckEmailExists), email)
 }
 
-// ConfirmRegister mocks base method.
-func (m *MockUserRegister) ConfirmRegister(code string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConfirmRegister", code)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ConfirmRegister indicates an expected call of ConfirmRegister.
-func (mr *MockUserRegisterMockRecorder) ConfirmRegister(code interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfirmRegister", reflect.TypeOf((*MockUserRegister)(nil).ConfirmRegister), code)
-}
-
 // CreateUser mocks base method.
 func (m *MockUserRegister) CreateUser(user *models.UserRedis) error {
 	m.ctrl.T.Helper()
@@ -77,20 +63,6 @@ func (m *MockUserRegister) CreateUser(user *models.UserRedis) error {
 func (mr *MockUserRegisterMockRecorder) CreateUser(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserRegister)(nil).CreateUser), user)
-}
-
-// Register mocks base method.
-func (m *MockUserRegister) Register(user *models.UserRedis) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Register", user)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Register indicates an expected call of Register.
-func (mr *MockUserRegisterMockRecorder) Register(user interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockUserRegister)(nil).Register), user)
 }
 
 // MockEmailSender is a mock of EmailSender interface.
@@ -194,4 +166,42 @@ func (m *MockRedisClient) Set(ctx context.Context, key string, value []byte, exp
 func (mr *MockRedisClientMockRecorder) Set(ctx, key, value, expiration interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockRedisClient)(nil).Set), ctx, key, value, expiration)
+}
+
+// MockPasswordHasher is a mock of PasswordHasher interface.
+type MockPasswordHasher struct {
+	ctrl     *gomock.Controller
+	recorder *MockPasswordHasherMockRecorder
+}
+
+// MockPasswordHasherMockRecorder is the mock recorder for MockPasswordHasher.
+type MockPasswordHasherMockRecorder struct {
+	mock *MockPasswordHasher
+}
+
+// NewMockPasswordHasher creates a new mock instance.
+func NewMockPasswordHasher(ctrl *gomock.Controller) *MockPasswordHasher {
+	mock := &MockPasswordHasher{ctrl: ctrl}
+	mock.recorder = &MockPasswordHasherMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPasswordHasher) EXPECT() *MockPasswordHasherMockRecorder {
+	return m.recorder
+}
+
+// HashPassword mocks base method.
+func (m *MockPasswordHasher) HashPassword(pwd string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HashPassword", pwd)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// HashPassword indicates an expected call of HashPassword.
+func (mr *MockPasswordHasherMockRecorder) HashPassword(pwd interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HashPassword", reflect.TypeOf((*MockPasswordHasher)(nil).HashPassword), pwd)
 }

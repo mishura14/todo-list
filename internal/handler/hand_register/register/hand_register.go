@@ -31,25 +31,25 @@ func (h *HandlerRegister) Register(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат email"})
 			return
 		case register.ErrEmailExists:
-			c.JSON(http.StatusBadGateway, gin.H{"error": "email уже зарегистрирован"})
+			c.JSON(http.StatusConflict, gin.H{"error": "email уже зарегистрирован"})
 			return
 		case register.ErrBadPasswordFormat:
-			c.JSON(http.StatusBadRequest, gin.H{"error": "неверный формат пароля"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "пароль не соответствует требованиям"})
 			return
 		case register.ErrHashPassword:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка хеширования пароля"})
 			return
 		case register.ErrSendConfirmation:
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка отправки кода подтверждения"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "не удалось отправить письмо"})
 			return
 		case register.ErrSaveRedis:
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сохранения в Redis"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сохранения в redis"})
 			return
 		case register.ErrSerializeUser:
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сериализации пользователя"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка сериализации пользовател"})
 			return
 		case register.ErrCheckEmailInDB:
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка проверки email в базе данных"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "ошибка проверки email в базе"})
 			return
 
 		}
