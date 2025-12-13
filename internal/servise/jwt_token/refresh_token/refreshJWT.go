@@ -1,4 +1,4 @@
-package generatejwt
+package refreshjwt
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 )
 
 // функция для генерации JWT токена
-func GenerateJWT(userID int) (string, error) {
+func RefreshJWT(userID int) (string, error) {
 	//получаем секретный ключ из переменной окружения
 	secret := os.Getenv("JWT_SECRET")
 	//проверяем, что секретный ключ не пустой
@@ -19,7 +19,7 @@ func GenerateJWT(userID int) (string, error) {
 	//создаем JWT токен
 	claims := jwt.MapClaims{
 		"user_id": userID,
-		"exp":     time.Now().Add(time.Hour * 1).Unix(),
+		"exp":     time.Now().Add(time.Hour * 7 * 24).Unix(),
 	}
 	//
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

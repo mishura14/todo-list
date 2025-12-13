@@ -63,39 +63,43 @@
 				
 				<option value="file3">git-register-project/internal/handler/hand_register/register/hand_register.go (68.0%)</option>
 				
-				<option value="file4">git-register-project/internal/repository/check_email_sql.go (0.0%)</option>
+				<option value="file4">git-register-project/internal/middleware/auth/auth.go (87.5%)</option>
 				
-				<option value="file5">git-register-project/internal/repository/create_user_sql.go (0.0%)</option>
+				<option value="file5">git-register-project/internal/repository/check_email_sql.go (0.0%)</option>
 				
-				<option value="file6">git-register-project/internal/repository/mocks/repository_mock.go (0.0%)</option>
+				<option value="file6">git-register-project/internal/repository/create_user_sql.go (0.0%)</option>
 				
-				<option value="file7">git-register-project/internal/repository/postgre_user.go (0.0%)</option>
+				<option value="file7">git-register-project/internal/repository/mocks/repository_mock.go (0.0%)</option>
 				
-				<option value="file8">git-register-project/internal/router/router.go (0.0%)</option>
+				<option value="file8">git-register-project/internal/repository/postgre_user.go (0.0%)</option>
 				
-				<option value="file9">git-register-project/internal/server_smtp/smtp_main.go (0.0%)</option>
+				<option value="file9">git-register-project/internal/router/router.go (0.0%)</option>
 				
-				<option value="file10">git-register-project/internal/server_smtp/smtp_register.go (0.0%)</option>
+				<option value="file10">git-register-project/internal/server_smtp/smtp_main.go (0.0%)</option>
 				
-				<option value="file11">git-register-project/internal/servise/generate_code/generatec_code.go (100.0%)</option>
+				<option value="file11">git-register-project/internal/server_smtp/smtp_register.go (0.0%)</option>
 				
-				<option value="file12">git-register-project/internal/servise/hash_password/check_hach_password/check_password_hash.go (100.0%)</option>
+				<option value="file12">git-register-project/internal/servise/generate_code/generatec_code.go (100.0%)</option>
 				
-				<option value="file13">git-register-project/internal/servise/hash_password/password_hash/password_hash.go (100.0%)</option>
+				<option value="file13">git-register-project/internal/servise/hash_password/check_hach_password/check_password_hash.go (100.0%)</option>
 				
-				<option value="file14">git-register-project/internal/servise/jwt_token/generate_jwt/generate_jwt.go (100.0%)</option>
+				<option value="file14">git-register-project/internal/servise/hash_password/password_hash/password_hash.go (100.0%)</option>
 				
-				<option value="file15">git-register-project/internal/servise/jwt_token/validate_jwt/validate_jwt.go (84.6%)</option>
+				<option value="file15">git-register-project/internal/servise/jwt_token/accessJWT/accessJWT.go (100.0%)</option>
 				
-				<option value="file16">git-register-project/internal/servise/register/confirm_register/confrem_register.go (100.0%)</option>
+				<option value="file16">git-register-project/internal/servise/jwt_token/refresh_token/refreshJWT.go (100.0%)</option>
 				
-				<option value="file17">git-register-project/internal/servise/register/register/register.go (91.7%)</option>
+				<option value="file17">git-register-project/internal/servise/jwt_token/validateJWT/access_jwt.go (80.0%)</option>
 				
-				<option value="file18">git-register-project/internal/servise/validate/valid_email/check_email.go (90.0%)</option>
+				<option value="file18">git-register-project/internal/servise/register/confirm_register/confrem_register.go (100.0%)</option>
 				
-				<option value="file19">git-register-project/internal/servise/validate/valid_password/check_password.go (100.0%)</option>
+				<option value="file19">git-register-project/internal/servise/register/register/register.go (91.7%)</option>
 				
-				<option value="file20">git-register-project/main.go (0.0%)</option>
+				<option value="file20">git-register-project/internal/servise/validate/valid_email/check_email.go (90.0%)</option>
+				
+				<option value="file21">git-register-project/internal/servise/validate/valid_password/check_password.go (100.0%)</option>
+				
+				<option value="file22">git-register-project/main.go (0.0%)</option>
 				
 				</select>
 			</div>
@@ -396,7 +400,46 @@ func (h *HandlerRegister) Register(c *gin.Context) <span class="cov8" title="1">
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package repository
+		<pre class="file" id="file4" style="display: none">package auth
+
+import (
+        validatejwt "git-register-project/internal/servise/jwt_token/validateJWT"
+        "net/http"
+        "strings"
+
+        "github.com/gin-gonic/gin"
+)
+
+// AuthMiddleware проверяет JWT access-токен
+func AuthMiddleware() gin.HandlerFunc <span class="cov8" title="1">{
+        return func(c *gin.Context) </span><span class="cov8" title="1">{
+                authHeader := c.GetHeader("Authorization")
+                if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") </span><span class="cov8" title="1">{
+                        c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+                        return
+                }</span>
+
+                <span class="cov8" title="1">tokenString := strings.TrimSpace(strings.TrimPrefix(authHeader, "Bearer "))
+                claims, err := validatejwt.ValidateToken(tokenString)
+                if err != nil </span><span class="cov8" title="1">{
+                        c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+                        return
+                }</span>
+
+                // Приводим user_id к int
+                <span class="cov8" title="1">userID, ok := claims["user_id"].(float64)
+                if !ok </span><span class="cov0" title="0">{
+                        c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+                        return
+                }</span>
+
+                <span class="cov8" title="1">c.Set("user_id", int(userID))
+                c.Next()</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package repository
 
 import (
         "context"
@@ -411,7 +454,7 @@ func (r *PostgreUser) CheckEmailExists(email string) (bool, error) <span class="
 }</span>
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package repository
+		<pre class="file" id="file6" style="display: none">package repository
 
 import (
         "context"
@@ -427,7 +470,7 @@ func (r *PostgreUser) CreateUser(user *models.UserRedis) error <span class="cov0
 }</span>
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+		<pre class="file" id="file7" style="display: none">// Code generated by MockGen. DO NOT EDIT.
 // Source: repository.go
 
 // Package mocks is a generated GoMock package.
@@ -636,7 +679,7 @@ func (mr *MockPasswordHasherMockRecorder) HashPassword(pwd interface{}) *gomock.
 }</span>
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package repository
+		<pre class="file" id="file8" style="display: none">package repository
 
 import (
         "database/sql"
@@ -651,7 +694,7 @@ func NewPostgreUser(db *sql.DB) *PostgreUser <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file8" style="display: none">package router
+		<pre class="file" id="file9" style="display: none">package router
 
 import (
         "git-register-project/internal/Database/redis"
@@ -685,7 +728,7 @@ func SetupRouter(r *gin.Engine, redisClient *redis.Redis, repo repository.UserRe
 }
 </pre>
 		
-		<pre class="file" id="file9" style="display: none">package serversmtp
+		<pre class="file" id="file10" style="display: none">package serversmtp
 
 import (
         "os"
@@ -727,7 +770,7 @@ func getEnvOrDefault(key, defaultValue string) string <span class="cov0" title="
 }
 </pre>
 		
-		<pre class="file" id="file10" style="display: none">package serversmtp
+		<pre class="file" id="file11" style="display: none">package serversmtp
 
 import (
         "fmt"
@@ -786,7 +829,7 @@ func generateEmailHTML(code string) string <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file11" style="display: none">package generate_code
+		<pre class="file" id="file12" style="display: none">package generate_code
 
 import (
         "crypto/rand"
@@ -802,7 +845,7 @@ func GenerateSecureCode() string <span class="cov8" title="1">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file12" style="display: none">package check_hash_password
+		<pre class="file" id="file13" style="display: none">package check_hash_password
 
 import "golang.org/x/crypto/bcrypt"
 
@@ -813,7 +856,7 @@ func CheckPasswordHash(password, hash string) bool <span class="cov8" title="1">
 }</span>
 </pre>
 		
-		<pre class="file" id="file13" style="display: none">package password_hash
+		<pre class="file" id="file14" style="display: none">package password_hash
 
 import "golang.org/x/crypto/bcrypt"
 
@@ -824,7 +867,7 @@ func HashPassword(password string) (string, error) <span class="cov8" title="1">
 }</span>
 </pre>
 		
-		<pre class="file" id="file14" style="display: none">package generatejwt
+		<pre class="file" id="file15" style="display: none">package accessjwt
 
 import (
         "errors"
@@ -835,7 +878,7 @@ import (
 )
 
 // функция для генерации JWT токена
-func GenerateJWT(userID int) (string, error) <span class="cov8" title="1">{
+func AccessJWT(userID int) (string, error) <span class="cov8" title="1">{
         //получаем секретный ключ из переменной окружения
         secret := os.Getenv("JWT_SECRET")
         //проверяем, что секретный ключ не пустой
@@ -853,7 +896,36 @@ func GenerateJWT(userID int) (string, error) <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file15" style="display: none">package validatejwt
+		<pre class="file" id="file16" style="display: none">package refreshjwt
+
+import (
+        "errors"
+        "os"
+        "time"
+
+        "github.com/golang-jwt/jwt/v5"
+)
+
+// функция для генерации JWT токена
+func RefreshJWT(userID int) (string, error) <span class="cov8" title="1">{
+        //получаем секретный ключ из переменной окружения
+        secret := os.Getenv("JWT_SECRET")
+        //проверяем, что секретный ключ не пустой
+        if secret == "" </span><span class="cov8" title="1">{
+                return "", errors.New("JWT_SECRET environment variable not set")
+        }</span>
+        //создаем JWT токен
+        <span class="cov8" title="1">claims := jwt.MapClaims{
+                "user_id": userID,
+                "exp":     time.Now().Add(time.Hour * 7 * 24).Unix(),
+        }
+        //
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+        return token.SignedString([]byte(secret))</span>
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package validatejwt
 
 import (
         "errors"
@@ -862,34 +934,42 @@ import (
         "github.com/golang-jwt/jwt/v5"
 )
 
-// функция для проверки токена
-func ValidateToken(tokenstr string) (map[string]interface{}, error) <span class="cov8" title="1">{
-        //получаем секретный ключ из переменной окружения
+// ValidateToken проверяет JWT access-токен и возвращает claims
+func ValidateToken(tokenStr string) (map[string]interface{}, error) <span class="cov8" title="1">{
+        // Получаем секретный ключ из переменной окружения
         secret := os.Getenv("JWT_SECRET")
-        //проверяем, что секретный ключ не пустой
         if secret == "" </span><span class="cov8" title="1">{
-                return nil, errors.New("JWT_SECRET не найдет")
+                return nil, errors.New("JWT_SECRET не найден")
         }</span>
-        //создаем функцию для проверки токена
-        <span class="cov8" title="1">tokens, err := jwt.Parse(tokenstr, func(token *jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
+
+        // Разбираем и проверяем токен
+        <span class="cov8" title="1">token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
+                // Проверяем метод подписи
                 if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok </span><span class="cov0" title="0">{
-                        return nil, errors.New("не поддерживаемый алгоритм")
+                        return nil, errors.New("не поддерживаемый алгоритм подписи")
                 }</span>
                 <span class="cov8" title="1">return []byte(secret), nil</span>
         })
-        //проверяем, что токен не пустой и валиден
-        <span class="cov8" title="1">if err != nil || !tokens.Valid </span><span class="cov8" title="1">{
+        <span class="cov8" title="1">if err != nil </span><span class="cov8" title="1">{
                 return nil, errors.New("неверный токен")
         }</span>
-        <span class="cov8" title="1">claims, ok := tokens.Claims.(jwt.MapClaims)
-        if !ok </span><span class="cov0" title="0">{
-                return nil, errors.New("не получилось получить токен")
+
+        // Проверяем, что токен валиден
+        <span class="cov8" title="1">if !token.Valid </span><span class="cov0" title="0">{
+                return nil, errors.New("неверный токен")
         }</span>
+
+        // Получаем claims
+        <span class="cov8" title="1">claims, ok := token.Claims.(jwt.MapClaims)
+        if !ok </span><span class="cov0" title="0">{
+                return nil, errors.New("не удалось получить claims")
+        }</span>
+
         <span class="cov8" title="1">return claims, nil</span>
 }
 </pre>
 		
-		<pre class="file" id="file16" style="display: none">package comfirm_register
+		<pre class="file" id="file18" style="display: none">package comfirm_register
 
 import (
         "context"
@@ -946,7 +1026,7 @@ func (s *ConfirmRegisterService) ConfirmRegister(code string) error <span class=
 }
 </pre>
 		
-		<pre class="file" id="file17" style="display: none">package register
+		<pre class="file" id="file19" style="display: none">package register
 
 import (
         "context"
@@ -1043,7 +1123,7 @@ func (s *RegisterService) Register(user *models.User) error <span class="cov8" t
 }
 </pre>
 		
-		<pre class="file" id="file18" style="display: none">package valid_email
+		<pre class="file" id="file20" style="display: none">package valid_email
 
 import (
         "regexp"
@@ -1072,7 +1152,7 @@ func CheckEmail(email string) bool <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file19" style="display: none">package valid_password
+		<pre class="file" id="file21" style="display: none">package valid_password
 
 import "unicode"
 
@@ -1102,7 +1182,7 @@ func CheckPassword(s string) bool <span class="cov8" title="1">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file20" style="display: none">package main
+		<pre class="file" id="file22" style="display: none">package main
 
 import (
         "fmt"

@@ -1,4 +1,4 @@
-package generatejwt
+package accessjwt
 
 import (
 	"os"
@@ -38,7 +38,7 @@ func TestGenerateJWT(t *testing.T) {
 			t.Cleanup(func() {
 				os.Unsetenv("JWT_SECRET")
 			})
-			token, err := GenerateJWT((tt.userID))
+			token, err := AccessJWT((tt.userID))
 			if tt.expectErr {
 				require.Error(t, err)
 				return

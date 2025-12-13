@@ -1,7 +1,7 @@
 package validatejwt
 
 import (
-	generatejwt "git-register-project/internal/servise/jwt_token/generate_jwt"
+	generatejwt "git-register-project/internal/servise/jwt_token/accessJWT"
 	"os"
 	"testing"
 )
@@ -18,7 +18,7 @@ func TestValidateJWT(t *testing.T) {
 			secret: "test_secret",
 			token: func() string {
 				os.Setenv("JWT_SECRET", "test_secret")
-				token, _ := generatejwt.GenerateJWT(1)
+				token, _ := generatejwt.AccessJWT(1)
 				return token
 			}(),
 			expectErr: false,
