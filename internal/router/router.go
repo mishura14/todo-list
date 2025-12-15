@@ -4,7 +4,7 @@ import (
 	"git-register-project/internal/Database/redis"
 	handler_comfirm_register "git-register-project/internal/handler/hand_register/confirm_register"
 	handler_register "git-register-project/internal/handler/hand_register/register"
-	"git-register-project/internal/repository"
+	repository "git-register-project/internal/repository/interface"
 	serversmtp "git-register-project/internal/server_smtp"
 	comfirm_register "git-register-project/internal/servise/register/confirm_register"
 	"git-register-project/internal/servise/register/register"

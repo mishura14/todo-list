@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"git-register-project/internal/models"
-	"git-register-project/internal/repository"
+	repository "git-register-project/internal/repository/interface"
 	"git-register-project/internal/servise/generate_code"
 	"git-register-project/internal/servise/hash_password/password_hash"
 	"git-register-project/internal/servise/validate/valid_email"

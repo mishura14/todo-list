@@ -1,4 +1,4 @@
-package repository
+package useCase
 
 import (
 	"database/sql"

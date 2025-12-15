@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"git-register-project/internal/models"
-	"git-register-project/internal/repository/mocks"
+	"git-register-project/internal/repository/interface/mocks"
 
 	"github.com/golang/mock/gomock"
 )

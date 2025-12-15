@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"git-register-project/internal/models"
-	"git-register-project/internal/repository"
+	repository "git-register-project/internal/repository/interface"
 )
 
 type ConfirmRegisterService struct {

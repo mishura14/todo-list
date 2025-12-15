@@ -13,7 +13,7 @@ import (
 
 	handler_comfirm_register "git-register-project/internal/handler/hand_register/confirm_register"
 	"git-register-project/internal/models"
-	"git-register-project/internal/repository/mocks"
+	"git-register-project/internal/repository/interface/mocks"
 	comfirm_register "git-register-project/internal/servise/register/confirm_register"
 )
 

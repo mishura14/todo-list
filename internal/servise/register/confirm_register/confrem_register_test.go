@@ -3,7 +3,7 @@ package comfirm_register
 import (
 	"errors"
 	"git-register-project/internal/models"
-	"git-register-project/internal/repository/mocks"
+	"git-register-project/internal/repository/interface/mocks"
 	"testing"
 
 	"github.com/golang/mock/gomock"

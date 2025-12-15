@@ -168,40 +168,136 @@ func (mr *MockRedisClientMockRecorder) Set(ctx, key, value, expiration interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockRedisClient)(nil).Set), ctx, key, value, expiration)
 }
 
-// MockPasswordHasher is a mock of PasswordHasher interface.
-type MockPasswordHasher struct {
+// MockUserLogin is a mock of UserLogin interface.
+type MockUserLogin struct {
 	ctrl     *gomock.Controller
-	recorder *MockPasswordHasherMockRecorder
+	recorder *MockUserLoginMockRecorder
 }
 
-// MockPasswordHasherMockRecorder is the mock recorder for MockPasswordHasher.
-type MockPasswordHasherMockRecorder struct {
-	mock *MockPasswordHasher
+// MockUserLoginMockRecorder is the mock recorder for MockUserLogin.
+type MockUserLoginMockRecorder struct {
+	mock *MockUserLogin
 }
 
-// NewMockPasswordHasher creates a new mock instance.
-func NewMockPasswordHasher(ctrl *gomock.Controller) *MockPasswordHasher {
-	mock := &MockPasswordHasher{ctrl: ctrl}
-	mock.recorder = &MockPasswordHasherMockRecorder{mock}
+// NewMockUserLogin creates a new mock instance.
+func NewMockUserLogin(ctrl *gomock.Controller) *MockUserLogin {
+	mock := &MockUserLogin{ctrl: ctrl}
+	mock.recorder = &MockUserLoginMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockPasswordHasher) EXPECT() *MockPasswordHasherMockRecorder {
+func (m *MockUserLogin) EXPECT() *MockUserLoginMockRecorder {
 	return m.recorder
 }
 
-// HashPassword mocks base method.
-func (m *MockPasswordHasher) HashPassword(pwd string) (string, error) {
+// InsertRefreshToken mocks base method.
+func (m *MockUserLogin) InsertRefreshToken(ctx context.Context, userID int, refreshTokenHash string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HashPassword", pwd)
+	ret := m.ctrl.Call(m, "InsertRefreshToken", ctx, userID, refreshTokenHash)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// InsertRefreshToken indicates an expected call of InsertRefreshToken.
+func (mr *MockUserLoginMockRecorder) InsertRefreshToken(ctx, userID, refreshTokenHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertRefreshToken", reflect.TypeOf((*MockUserLogin)(nil).InsertRefreshToken), ctx, userID, refreshTokenHash)
+}
+
+// SelectUser mocks base method.
+func (m *MockUserLogin) SelectUser(ctx context.Context, email string) (*models.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectUser", ctx, email)
+	ret0, _ := ret[0].(*models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectUser indicates an expected call of SelectUser.
+func (mr *MockUserLoginMockRecorder) SelectUser(ctx, email interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectUser", reflect.TypeOf((*MockUserLogin)(nil).SelectUser), ctx, email)
+}
+
+// MockTokenGenerator is a mock of TokenGenerator interface.
+type MockTokenGenerator struct {
+	ctrl     *gomock.Controller
+	recorder *MockTokenGeneratorMockRecorder
+}
+
+// MockTokenGeneratorMockRecorder is the mock recorder for MockTokenGenerator.
+type MockTokenGeneratorMockRecorder struct {
+	mock *MockTokenGenerator
+}
+
+// NewMockTokenGenerator creates a new mock instance.
+func NewMockTokenGenerator(ctrl *gomock.Controller) *MockTokenGenerator {
+	mock := &MockTokenGenerator{ctrl: ctrl}
+	mock.recorder = &MockTokenGeneratorMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTokenGenerator) EXPECT() *MockTokenGeneratorMockRecorder {
+	return m.recorder
+}
+
+// AccessJWT mocks base method.
+func (m *MockTokenGenerator) AccessJWT(userID int) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AccessJWT", userID)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AccessJWT indicates an expected call of AccessJWT.
+func (mr *MockTokenGeneratorMockRecorder) AccessJWT(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AccessJWT", reflect.TypeOf((*MockTokenGenerator)(nil).AccessJWT), userID)
+}
+
+// CheckPasswordHash mocks base method.
+func (m *MockTokenGenerator) CheckPasswordHash(password, hash string) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckPasswordHash", password, hash)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// CheckPasswordHash indicates an expected call of CheckPasswordHash.
+func (mr *MockTokenGeneratorMockRecorder) CheckPasswordHash(password, hash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckPasswordHash", reflect.TypeOf((*MockTokenGenerator)(nil).CheckPasswordHash), password, hash)
+}
+
+// HashPassword mocks base method.
+func (m *MockTokenGenerator) HashPassword(password string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HashPassword", password)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // HashPassword indicates an expected call of HashPassword.
-func (mr *MockPasswordHasherMockRecorder) HashPassword(pwd interface{}) *gomock.Call {
+func (mr *MockTokenGeneratorMockRecorder) HashPassword(password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HashPassword", reflect.TypeOf((*MockPasswordHasher)(nil).HashPassword), pwd)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HashPassword", reflect.TypeOf((*MockTokenGenerator)(nil).HashPassword), password)
+}
+
+// RefreshJWT mocks base method.
+func (m *MockTokenGenerator) RefreshJWT(userID int) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RefreshJWT", userID)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RefreshJWT indicates an expected call of RefreshJWT.
+func (mr *MockTokenGeneratorMockRecorder) RefreshJWT(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshJWT", reflect.TypeOf((*MockTokenGenerator)(nil).RefreshJWT), userID)
 }

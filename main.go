@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"git-register-project/internal/Database/postgres"
 	"git-register-project/internal/Database/redis"
-	"git-register-project/internal/repository"
+	repository "git-register-project/internal/repository/interface"
+	"git-register-project/internal/repository/useCase"
 	"git-register-project/internal/router"
 	"log"
 	"os"
@@ -34,7 +35,7 @@ func main() {
 	}
 	defer rdb.Client.Close()
 	fmt.Println("Connection Redis")
-	var repo repository.UserRegister = repository.NewPostgreUser(db.DB)
+	var repo repository.UserRegister = useCase.NewPostgreUser(db.DB)
 	r := gin.Default()
 	router.SetupRouter(r, rdb, repo)
 

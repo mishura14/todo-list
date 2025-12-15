@@ -12,7 +12,7 @@ import (
 	"github.com/golang/mock/gomock"
 
 	handler_register "git-register-project/internal/handler/hand_register/register"
-	"git-register-project/internal/repository/mocks"
+	"git-register-project/internal/repository/interface/mocks"
 	"git-register-project/internal/servise/register/register"
 )
 

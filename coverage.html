@@ -65,41 +65,47 @@
 				
 				<option value="file4">git-register-project/internal/middleware/auth/auth.go (87.5%)</option>
 				
-				<option value="file5">git-register-project/internal/repository/check_email_sql.go (0.0%)</option>
+				<option value="file5">git-register-project/internal/repository/interface/mocks/repository_mock.go (0.0%)</option>
 				
-				<option value="file6">git-register-project/internal/repository/create_user_sql.go (0.0%)</option>
+				<option value="file6">git-register-project/internal/repository/useCase/check_email_sql.go (0.0%)</option>
 				
-				<option value="file7">git-register-project/internal/repository/mocks/repository_mock.go (0.0%)</option>
+				<option value="file7">git-register-project/internal/repository/useCase/create_user_sql.go (0.0%)</option>
 				
-				<option value="file8">git-register-project/internal/repository/postgre_user.go (0.0%)</option>
+				<option value="file8">git-register-project/internal/repository/useCase/postgre_user.go (0.0%)</option>
 				
-				<option value="file9">git-register-project/internal/router/router.go (0.0%)</option>
+				<option value="file9">git-register-project/internal/repository/useCase/refresh_sql.go (0.0%)</option>
 				
-				<option value="file10">git-register-project/internal/server_smtp/smtp_main.go (0.0%)</option>
+				<option value="file10">git-register-project/internal/repository/useCase/select_user_sql.go (0.0%)</option>
 				
-				<option value="file11">git-register-project/internal/server_smtp/smtp_register.go (0.0%)</option>
+				<option value="file11">git-register-project/internal/router/router.go (0.0%)</option>
 				
-				<option value="file12">git-register-project/internal/servise/generate_code/generatec_code.go (100.0%)</option>
+				<option value="file12">git-register-project/internal/server_smtp/smtp_main.go (0.0%)</option>
 				
-				<option value="file13">git-register-project/internal/servise/hash_password/check_hach_password/check_password_hash.go (100.0%)</option>
+				<option value="file13">git-register-project/internal/server_smtp/smtp_register.go (0.0%)</option>
 				
-				<option value="file14">git-register-project/internal/servise/hash_password/password_hash/password_hash.go (100.0%)</option>
+				<option value="file14">git-register-project/internal/servise/generate_code/generatec_code.go (100.0%)</option>
 				
-				<option value="file15">git-register-project/internal/servise/jwt_token/accessJWT/accessJWT.go (100.0%)</option>
+				<option value="file15">git-register-project/internal/servise/hash_password/check_hach_password/check_password_hash.go (100.0%)</option>
 				
-				<option value="file16">git-register-project/internal/servise/jwt_token/refresh_token/refreshJWT.go (100.0%)</option>
+				<option value="file16">git-register-project/internal/servise/hash_password/password_hash/password_hash.go (100.0%)</option>
 				
-				<option value="file17">git-register-project/internal/servise/jwt_token/validateJWT/access_jwt.go (80.0%)</option>
+				<option value="file17">git-register-project/internal/servise/jwt_token/accessJWT/accessJWT.go (100.0%)</option>
 				
-				<option value="file18">git-register-project/internal/servise/register/confirm_register/confrem_register.go (100.0%)</option>
+				<option value="file18">git-register-project/internal/servise/jwt_token/refresh_token/refreshJWT.go (100.0%)</option>
 				
-				<option value="file19">git-register-project/internal/servise/register/register/register.go (91.7%)</option>
+				<option value="file19">git-register-project/internal/servise/jwt_token/validateJWT/access_jwt.go (80.0%)</option>
 				
-				<option value="file20">git-register-project/internal/servise/validate/valid_email/check_email.go (90.0%)</option>
+				<option value="file20">git-register-project/internal/servise/login/login.go (85.0%)</option>
 				
-				<option value="file21">git-register-project/internal/servise/validate/valid_password/check_password.go (100.0%)</option>
+				<option value="file21">git-register-project/internal/servise/register/confirm_register/confrem_register.go (100.0%)</option>
 				
-				<option value="file22">git-register-project/main.go (0.0%)</option>
+				<option value="file22">git-register-project/internal/servise/register/register/register.go (91.7%)</option>
+				
+				<option value="file23">git-register-project/internal/servise/validate/valid_email/check_email.go (90.0%)</option>
+				
+				<option value="file24">git-register-project/internal/servise/validate/valid_password/check_password.go (100.0%)</option>
+				
+				<option value="file25">git-register-project/main.go (0.0%)</option>
 				
 				</select>
 			</div>
@@ -439,38 +445,7 @@ func AuthMiddleware() gin.HandlerFunc <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package repository
-
-import (
-        "context"
-)
-
-// запрос в базу данных проверки существования email
-func (r *PostgreUser) CheckEmailExists(email string) (bool, error) <span class="cov0" title="0">{
-        var exists bool
-        err := r.db.QueryRowContext(context.Background(),
-                `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`, email).Scan(&amp;exists)
-        return exists, err
-}</span>
-</pre>
-		
-		<pre class="file" id="file6" style="display: none">package repository
-
-import (
-        "context"
-        "git-register-project/internal/models"
-)
-
-// запрос создания пользователя в бд
-func (r *PostgreUser) CreateUser(user *models.UserRedis) error <span class="cov0" title="0">{
-        _, err := r.db.ExecContext(context.Background(),
-                `INSERT INTO users (name, email, password_hash) VALUES ($1,$2,$3)`,
-                user.Name, user.Email, user.Password)
-        return err
-}</span>
-</pre>
-		
-		<pre class="file" id="file7" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+		<pre class="file" id="file5" style="display: none">// Code generated by MockGen. DO NOT EDIT.
 // Source: repository.go
 
 // Package mocks is a generated GoMock package.
@@ -640,46 +615,173 @@ func (mr *MockRedisClientMockRecorder) Set(ctx, key, value, expiration interface
         return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockRedisClient)(nil).Set), ctx, key, value, expiration)
 }</span>
 
-// MockPasswordHasher is a mock of PasswordHasher interface.
-type MockPasswordHasher struct {
+// MockUserLogin is a mock of UserLogin interface.
+type MockUserLogin struct {
         ctrl     *gomock.Controller
-        recorder *MockPasswordHasherMockRecorder
+        recorder *MockUserLoginMockRecorder
 }
 
-// MockPasswordHasherMockRecorder is the mock recorder for MockPasswordHasher.
-type MockPasswordHasherMockRecorder struct {
-        mock *MockPasswordHasher
+// MockUserLoginMockRecorder is the mock recorder for MockUserLogin.
+type MockUserLoginMockRecorder struct {
+        mock *MockUserLogin
 }
 
-// NewMockPasswordHasher creates a new mock instance.
-func NewMockPasswordHasher(ctrl *gomock.Controller) *MockPasswordHasher <span class="cov0" title="0">{
-        mock := &amp;MockPasswordHasher{ctrl: ctrl}
-        mock.recorder = &amp;MockPasswordHasherMockRecorder{mock}
+// NewMockUserLogin creates a new mock instance.
+func NewMockUserLogin(ctrl *gomock.Controller) *MockUserLogin <span class="cov0" title="0">{
+        mock := &amp;MockUserLogin{ctrl: ctrl}
+        mock.recorder = &amp;MockUserLoginMockRecorder{mock}
         return mock
 }</span>
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockPasswordHasher) EXPECT() *MockPasswordHasherMockRecorder <span class="cov0" title="0">{
+func (m *MockUserLogin) EXPECT() *MockUserLoginMockRecorder <span class="cov0" title="0">{
         return m.recorder
 }</span>
 
-// HashPassword mocks base method.
-func (m *MockPasswordHasher) HashPassword(pwd string) (string, error) <span class="cov0" title="0">{
+// InsertRefreshToken mocks base method.
+func (m *MockUserLogin) InsertRefreshToken(ctx context.Context, userID int, refreshTokenHash string) error <span class="cov0" title="0">{
         m.ctrl.T.Helper()
-        ret := m.ctrl.Call(m, "HashPassword", pwd)
+        ret := m.ctrl.Call(m, "InsertRefreshToken", ctx, userID, refreshTokenHash)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// InsertRefreshToken indicates an expected call of InsertRefreshToken.
+func (mr *MockUserLoginMockRecorder) InsertRefreshToken(ctx, userID, refreshTokenHash interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertRefreshToken", reflect.TypeOf((*MockUserLogin)(nil).InsertRefreshToken), ctx, userID, refreshTokenHash)
+}</span>
+
+// SelectUser mocks base method.
+func (m *MockUserLogin) SelectUser(ctx context.Context, email string) (*models.User, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "SelectUser", ctx, email)
+        ret0, _ := ret[0].(*models.User)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// SelectUser indicates an expected call of SelectUser.
+func (mr *MockUserLoginMockRecorder) SelectUser(ctx, email interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectUser", reflect.TypeOf((*MockUserLogin)(nil).SelectUser), ctx, email)
+}</span>
+
+// MockTokenGenerator is a mock of TokenGenerator interface.
+type MockTokenGenerator struct {
+        ctrl     *gomock.Controller
+        recorder *MockTokenGeneratorMockRecorder
+}
+
+// MockTokenGeneratorMockRecorder is the mock recorder for MockTokenGenerator.
+type MockTokenGeneratorMockRecorder struct {
+        mock *MockTokenGenerator
+}
+
+// NewMockTokenGenerator creates a new mock instance.
+func NewMockTokenGenerator(ctrl *gomock.Controller) *MockTokenGenerator <span class="cov0" title="0">{
+        mock := &amp;MockTokenGenerator{ctrl: ctrl}
+        mock.recorder = &amp;MockTokenGeneratorMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTokenGenerator) EXPECT() *MockTokenGeneratorMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// AccessJWT mocks base method.
+func (m *MockTokenGenerator) AccessJWT(userID int) (string, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "AccessJWT", userID)
+        ret0, _ := ret[0].(string)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// AccessJWT indicates an expected call of AccessJWT.
+func (mr *MockTokenGeneratorMockRecorder) AccessJWT(userID interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AccessJWT", reflect.TypeOf((*MockTokenGenerator)(nil).AccessJWT), userID)
+}</span>
+
+// CheckPasswordHash mocks base method.
+func (m *MockTokenGenerator) CheckPasswordHash(password, hash string) bool <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "CheckPasswordHash", password, hash)
+        ret0, _ := ret[0].(bool)
+        return ret0
+}</span>
+
+// CheckPasswordHash indicates an expected call of CheckPasswordHash.
+func (mr *MockTokenGeneratorMockRecorder) CheckPasswordHash(password, hash interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckPasswordHash", reflect.TypeOf((*MockTokenGenerator)(nil).CheckPasswordHash), password, hash)
+}</span>
+
+// HashPassword mocks base method.
+func (m *MockTokenGenerator) HashPassword(password string) (string, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "HashPassword", password)
         ret0, _ := ret[0].(string)
         ret1, _ := ret[1].(error)
         return ret0, ret1
 }</span>
 
 // HashPassword indicates an expected call of HashPassword.
-func (mr *MockPasswordHasherMockRecorder) HashPassword(pwd interface{}) *gomock.Call <span class="cov0" title="0">{
+func (mr *MockTokenGeneratorMockRecorder) HashPassword(password interface{}) *gomock.Call <span class="cov0" title="0">{
         mr.mock.ctrl.T.Helper()
-        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HashPassword", reflect.TypeOf((*MockPasswordHasher)(nil).HashPassword), pwd)
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HashPassword", reflect.TypeOf((*MockTokenGenerator)(nil).HashPassword), password)
+}</span>
+
+// RefreshJWT mocks base method.
+func (m *MockTokenGenerator) RefreshJWT(userID int) (string, error) <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "RefreshJWT", userID)
+        ret0, _ := ret[0].(string)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// RefreshJWT indicates an expected call of RefreshJWT.
+func (mr *MockTokenGeneratorMockRecorder) RefreshJWT(userID interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshJWT", reflect.TypeOf((*MockTokenGenerator)(nil).RefreshJWT), userID)
 }</span>
 </pre>
 		
-		<pre class="file" id="file8" style="display: none">package repository
+		<pre class="file" id="file6" style="display: none">package useCase
+
+import (
+        "context"
+)
+
+// запрос в базу данных проверки существования email
+func (r *PostgreUser) CheckEmailExists(email string) (bool, error) <span class="cov0" title="0">{
+        var exists bool
+        err := r.db.QueryRowContext(context.Background(),
+                `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`, email).Scan(&amp;exists)
+        return exists, err
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package useCase
+
+import (
+        "context"
+        "git-register-project/internal/models"
+)
+
+// запрос создания пользователя в бд
+func (r *PostgreUser) CreateUser(user *models.UserRedis) error <span class="cov0" title="0">{
+        _, err := r.db.ExecContext(context.Background(),
+                `INSERT INTO users (name, email, password_hash) VALUES ($1,$2,$3)`,
+                user.Name, user.Email, user.Password)
+        return err
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package useCase
 
 import (
         "database/sql"
@@ -694,13 +796,70 @@ func NewPostgreUser(db *sql.DB) *PostgreUser <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file9" style="display: none">package router
+		<pre class="file" id="file9" style="display: none">package useCase
+
+import (
+        "context"
+        "time"
+)
+
+func (r *PostgreUser) InsertRefreshToken(ctx context.Context, userID int, refreshTokenHash string) error <span class="cov0" title="0">{
+
+        expiresAt := time.Now().Add(30 * 24 * time.Hour)
+
+        _, err := r.db.ExecContext(
+                ctx,
+                `INSERT INTO refresh_tokens (user_id, token_hash, expires_at)
+                 VALUES ($1, $2, $3)
+                 ON CONFLICT (user_id)
+                 DO UPDATE SET
+                     token_hash = EXCLUDED.token_hash,
+                     expires_at = EXCLUDED.expires_at`,
+                userID,
+                refreshTokenHash,
+                expiresAt,
+        )
+
+        return err
+}</span>
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package useCase
+
+import (
+        "context"
+        "git-register-project/internal/models"
+)
+
+func (r *PostgreUser) SelectUser(ctx context.Context, email string) (*models.User, error) <span class="cov0" title="0">{
+        var user models.User
+
+        err := r.db.QueryRowContext(
+                ctx,
+                `SELECT id, name, email, password_hash FROM users WHERE email = $1`,
+                email,
+        ).Scan(
+                &amp;user.ID,
+                &amp;user.Name,
+                &amp;user.Email,
+                &amp;user.Password,
+        )
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return &amp;user, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package router
 
 import (
         "git-register-project/internal/Database/redis"
         handler_comfirm_register "git-register-project/internal/handler/hand_register/confirm_register"
         handler_register "git-register-project/internal/handler/hand_register/register"
-        "git-register-project/internal/repository"
+        repository "git-register-project/internal/repository/interface"
         serversmtp "git-register-project/internal/server_smtp"
         comfirm_register "git-register-project/internal/servise/register/confirm_register"
         "git-register-project/internal/servise/register/register"
@@ -728,7 +887,7 @@ func SetupRouter(r *gin.Engine, redisClient *redis.Redis, repo repository.UserRe
 }
 </pre>
 		
-		<pre class="file" id="file10" style="display: none">package serversmtp
+		<pre class="file" id="file12" style="display: none">package serversmtp
 
 import (
         "os"
@@ -770,7 +929,7 @@ func getEnvOrDefault(key, defaultValue string) string <span class="cov0" title="
 }
 </pre>
 		
-		<pre class="file" id="file11" style="display: none">package serversmtp
+		<pre class="file" id="file13" style="display: none">package serversmtp
 
 import (
         "fmt"
@@ -829,7 +988,7 @@ func generateEmailHTML(code string) string <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file12" style="display: none">package generate_code
+		<pre class="file" id="file14" style="display: none">package generate_code
 
 import (
         "crypto/rand"
@@ -845,7 +1004,7 @@ func GenerateSecureCode() string <span class="cov8" title="1">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file13" style="display: none">package check_hash_password
+		<pre class="file" id="file15" style="display: none">package check_hash_password
 
 import "golang.org/x/crypto/bcrypt"
 
@@ -856,7 +1015,7 @@ func CheckPasswordHash(password, hash string) bool <span class="cov8" title="1">
 }</span>
 </pre>
 		
-		<pre class="file" id="file14" style="display: none">package password_hash
+		<pre class="file" id="file16" style="display: none">package password_hash
 
 import "golang.org/x/crypto/bcrypt"
 
@@ -867,7 +1026,7 @@ func HashPassword(password string) (string, error) <span class="cov8" title="1">
 }</span>
 </pre>
 		
-		<pre class="file" id="file15" style="display: none">package accessjwt
+		<pre class="file" id="file17" style="display: none">package accessjwt
 
 import (
         "errors"
@@ -896,7 +1055,7 @@ func AccessJWT(userID int) (string, error) <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file16" style="display: none">package refreshjwt
+		<pre class="file" id="file18" style="display: none">package refreshjwt
 
 import (
         "errors"
@@ -925,7 +1084,7 @@ func RefreshJWT(userID int) (string, error) <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file17" style="display: none">package validatejwt
+		<pre class="file" id="file19" style="display: none">package validatejwt
 
 import (
         "errors"
@@ -969,14 +1128,83 @@ func ValidateToken(tokenStr string) (map[string]interface{}, error) <span class=
 }
 </pre>
 		
-		<pre class="file" id="file18" style="display: none">package comfirm_register
+		<pre class="file" id="file20" style="display: none">package login
+
+import (
+        "context"
+        "errors"
+        "git-register-project/internal/models"
+        repository "git-register-project/internal/repository/interface"
+)
+
+type LoginService struct {
+        login repository.TokenGenerator
+        repo  repository.UserLogin
+        mail  repository.EmailSender
+        redis repository.RedisClient
+}
+
+func NewLoginService(repo repository.UserLogin, mail repository.EmailSender, redis repository.RedisClient, login repository.TokenGenerator) *LoginService <span class="cov8" title="1">{
+        return &amp;LoginService{
+                login: login,
+                repo:  repo,
+                mail:  mail,
+                redis: redis,
+        }
+}</span>
+
+var (
+        ErrUserNotFound       = errors.New("ваш аккаунт не зарегистрирован")
+        ErrPasswordIncorrect  = errors.New("неверный пароль")
+        ErrAccessToken        = errors.New("ошибка создания токена")
+        ErrRefreshToken       = errors.New("ошибка создания refresh токена")
+        ErrHashRefreshToken   = errors.New("ошибка хеширования refresh токена")
+        ErrInsertRefreshToken = errors.New("ошибка вставки refresh токена")
+)
+
+func (ls *LoginService) Login(login models.UserLogin) (accessToken string, refreshToken string, err error) <span class="cov8" title="1">{
+        ctx := context.Background()
+        //получаем данные по email
+        user, err := ls.repo.SelectUser(ctx, login.Email)
+        if err != nil </span><span class="cov8" title="1">{
+                return "", "", ErrUserNotFound
+        }</span>
+        //сверяем пароль
+        <span class="cov8" title="1">if !ls.login.CheckPasswordHash(login.Password, user.Password) </span><span class="cov8" title="1">{
+                return "", "", ErrPasswordIncorrect
+        }</span>
+        //создание токенов
+        <span class="cov8" title="1">token, err := ls.login.AccessJWT(user.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", "", ErrAccessToken
+        }</span>
+        <span class="cov8" title="1">refreshToken, err = ls.login.RefreshJWT(user.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", "", ErrRefreshToken
+        }</span>
+        //хеширование токена
+        <span class="cov8" title="1">tokenHash, err := ls.login.HashPassword(refreshToken)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", "", ErrHashRefreshToken
+        }</span>
+        //вставка токена в БД
+        <span class="cov8" title="1">err = ls.repo.InsertRefreshToken(ctx, user.ID, tokenHash)
+        if err != nil </span><span class="cov8" title="1">{
+                return "", "", ErrInsertRefreshToken
+        }</span>
+        <span class="cov8" title="1">return token, tokenHash, nil</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package comfirm_register
 
 import (
         "context"
         "encoding/json"
         "errors"
         "git-register-project/internal/models"
-        "git-register-project/internal/repository"
+        repository "git-register-project/internal/repository/interface"
 )
 
 type ConfirmRegisterService struct {
@@ -1026,14 +1254,14 @@ func (s *ConfirmRegisterService) ConfirmRegister(code string) error <span class=
 }
 </pre>
 		
-		<pre class="file" id="file19" style="display: none">package register
+		<pre class="file" id="file22" style="display: none">package register
 
 import (
         "context"
         "encoding/json"
         "errors"
         "git-register-project/internal/models"
-        "git-register-project/internal/repository"
+        repository "git-register-project/internal/repository/interface"
         "git-register-project/internal/servise/generate_code"
         "git-register-project/internal/servise/hash_password/password_hash"
         "git-register-project/internal/servise/validate/valid_email"
@@ -1123,7 +1351,7 @@ func (s *RegisterService) Register(user *models.User) error <span class="cov8" t
 }
 </pre>
 		
-		<pre class="file" id="file20" style="display: none">package valid_email
+		<pre class="file" id="file23" style="display: none">package valid_email
 
 import (
         "regexp"
@@ -1152,7 +1380,7 @@ func CheckEmail(email string) bool <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file21" style="display: none">package valid_password
+		<pre class="file" id="file24" style="display: none">package valid_password
 
 import "unicode"
 
@@ -1182,13 +1410,14 @@ func CheckPassword(s string) bool <span class="cov8" title="1">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file22" style="display: none">package main
+		<pre class="file" id="file25" style="display: none">package main
 
 import (
         "fmt"
         "git-register-project/internal/Database/postgres"
         "git-register-project/internal/Database/redis"
-        "git-register-project/internal/repository"
+        repository "git-register-project/internal/repository/interface"
+        "git-register-project/internal/repository/useCase"
         "git-register-project/internal/router"
         "log"
         "os"
@@ -1218,7 +1447,7 @@ func main() <span class="cov0" title="0">{
         }
         <span class="cov0" title="0">defer rdb.Client.Close()
         fmt.Println("Connection Redis")
-        var repo repository.UserRegister = repository.NewPostgreUser(db.DB)
+        var repo repository.UserRegister = useCase.NewPostgreUser(db.DB)
         r := gin.Default()
         router.SetupRouter(r, rdb, repo)
 
