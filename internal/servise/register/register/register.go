@@ -6,8 +6,8 @@ import (
 	"errors"
 	"git-register-project/internal/models"
 	repository "git-register-project/internal/repository/interface"
+	hashbcrypt "git-register-project/internal/servise/bcryptHash/hash"
 	"git-register-project/internal/servise/generate_code"
-	"git-register-project/internal/servise/hash_password/password_hash"
 	"git-register-project/internal/servise/validate/valid_email"
 	"git-register-project/internal/servise/validate/valid_password"
 	"time"
@@ -61,7 +61,7 @@ func (s *RegisterService) Register(user *models.User) error {
 	}
 
 	// хеш
-	hash, err := password_hash.HashPassword(user.Password)
+	hash, err := hashbcrypt.HashBcrypt(user.Password)
 	if err != nil {
 		return ErrHashPassword
 	}

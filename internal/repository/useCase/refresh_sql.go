@@ -2,16 +2,17 @@ package useCase
 
 import (
 	"context"
+	"fmt"
 	"time"
 )
 
-func (r *PostgreUser) InsertRefreshToken(ctx context.Context, userID int, refreshTokenHash string) error {
+// фунция внесения refresh token в bd
+func (r *PostgreUser) InsertRefreshToken(userID int, refreshTokenHash string) error {
 
 	expiresAt := time.Now().Add(30 * 24 * time.Hour)
 
-	_, err := r.db.ExecContext(
-		ctx,
-		`INSERT INTO refresh_tokens (user_id, token_hash, expires_at)
+	_, err := r.db.ExecContext(context.Background(),
+		`INSERT INTO refresh_tokens(user_id, token_hash, expires_at)
 		 VALUES ($1, $2, $3)
 		 ON CONFLICT (user_id)
 		 DO UPDATE SET
@@ -21,6 +22,6 @@ func (r *PostgreUser) InsertRefreshToken(ctx context.Context, userID int, refres
 		refreshTokenHash,
 		expiresAt,
 	)
-
+	fmt.Println(err)
 	return err
 }

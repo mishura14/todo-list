@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"git-register-project/internal/Database/postgres"
 	"git-register-project/internal/Database/redis"
-	repository "git-register-project/internal/repository/interface"
 	"git-register-project/internal/repository/useCase"
 	"git-register-project/internal/router"
+	jwt_adapter "git-register-project/internal/servise/jwt_token"
 	"log"
 	"os"
 
@@ -35,9 +35,10 @@ func main() {
 	}
 	defer rdb.Client.Close()
 	fmt.Println("Connection Redis")
-	var repo repository.UserRegister = useCase.NewPostgreUser(db.DB)
+	userRepo := useCase.NewPostgreUser(db.DB)
+	tokenGen := jwt_adapter.NewAdapter()
 	r := gin.Default()
-	router.SetupRouter(r, rdb, repo)
+	router.SetupRouter(r, rdb, userRepo, userRepo, tokenGen)
 
 	// Получаем порт из .env или используем по умолчанию
 	port := os.Getenv("APP_PORT")

@@ -1,13 +1,13 @@
-package check_hash_password
+package checkhash
 
 import (
-	"git-register-project/internal/servise/hash_password/password_hash"
+	hashbcrypt "git-register-project/internal/servise/bcryptHash/hash"
 	"testing"
 )
 
 func TestCheckPasswordHash(t *testing.T) {
 	password := "mishura14"
-	hash, err := password_hash.HashPassword(password)
+	hash, err := hashbcrypt.HashBcrypt(password)
 	if err != nil {
 		t.Error("hashing password failed", err)
 	}
@@ -62,7 +62,7 @@ func TestCheckPasswordHash(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			got := CheckPasswordHash(c.password, c.hash)
+			got := CheckHash(c.password, c.hash)
 			if got != c.want {
 				t.Errorf("got %v, want %v", got, c.want)
 			}

@@ -1,15 +1,15 @@
-package password_hash
+package hashbcrypt
 
 import (
-	check_hash_password "git-register-project/internal/servise/hash_password/check_hach_password"
+	checkhash "git-register-project/internal/servise/bcryptHash/checkHash"
 	"testing"
 )
 
-func TestHashPassword(t *testing.T) {
+func TestHash(t *testing.T) {
 	password := "mishura_14_12_2010(google)"
 
 	// 1. Хешируем пароль
-	hash, err := HashPassword(password)
+	hash, err := HashBcrypt(password)
 	if err != nil {
 		t.Fatalf("HashPassword failed: %v", err)
 	}
@@ -25,13 +25,13 @@ func TestHashPassword(t *testing.T) {
 	}
 
 	// 4. Проверяем что можно верифицировать хеш
-	if !check_hash_password.CheckPasswordHash(password, hash) {
+	if !checkhash.CheckHash(password, hash) {
 		t.Errorf("Cannot verify generated hash")
 	}
 
 	// 5. Хешируем тот же пароль ещё раз
-	hash1, _ := HashPassword(password)
-	hash2, _ := HashPassword(password)
+	hash1, _ := HashBcrypt(password)
+	hash2, _ := HashBcrypt(password)
 
 	// 6. Хеши должны быть РАЗНЫМИ (из-за соли в bcrypt)
 	if hash1 == hash2 {
@@ -41,7 +41,7 @@ func TestHashPassword(t *testing.T) {
 	// 7. Проверяем уникальность хешей при многократном хешировании
 	m := map[string]bool{}
 	for i := 0; i < 10; i++ {
-		h, err := HashPassword(password)
+		h, err := HashBcrypt(password)
 		if err != nil {
 			t.Fatalf("HashPassword failed: %v", err)
 		}

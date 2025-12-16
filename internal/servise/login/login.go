@@ -40,7 +40,7 @@ func (ls *LoginService) Login(login models.UserLogin) (accessToken string, refre
 		return "", "", ErrUserNotFound
 	}
 	//сверяем пароль
-	if !ls.login.CheckPasswordHash(login.Password, user.Password) {
+	if !ls.login.CheckHash(login.Password, user.Password) {
 		return "", "", ErrPasswordIncorrect
 	}
 	//создание токенов
@@ -53,12 +53,9 @@ func (ls *LoginService) Login(login models.UserLogin) (accessToken string, refre
 		return "", "", ErrRefreshToken
 	}
 	//хеширование токена
-	tokenHash, err := ls.login.HashPassword(refreshToken)
-	if err != nil {
-		return "", "", ErrHashRefreshToken
-	}
+	tokenHash := ls.login.HashRefreshToken(refreshToken)
 	//вставка токена в БД
-	err = ls.repo.InsertRefreshToken(ctx, user.ID, tokenHash)
+	err = ls.repo.InsertRefreshToken(user.ID, tokenHash)
 	if err != nil {
 		return "", "", ErrInsertRefreshToken
 	}

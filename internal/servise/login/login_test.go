@@ -41,11 +41,11 @@ func TestLoginService_Login(t *testing.T) {
 					Email:    "ok@example.com",
 					Password: "hashedpassword",
 				}, nil)
-				mockToken.EXPECT().CheckPasswordHash("password123", "hashedpassword").Return(true)
+				mockToken.EXPECT().CheckHash("password123", "hashedpassword").Return(true)
 				mockToken.EXPECT().AccessJWT(1).Return("access-token", nil)
 				mockToken.EXPECT().RefreshJWT(1).Return("refresh-token", nil)
-				mockToken.EXPECT().HashPassword("refresh-token").Return("hashed-refresh", nil)
-				mockRepo.EXPECT().InsertRefreshToken(ctx, 1, "hashed-refresh").Return(nil)
+				mockToken.EXPECT().HashRefreshToken("refresh-token").Return("hashed-refresh")
+				mockRepo.EXPECT().InsertRefreshToken(1, "hashed-refresh").Return(nil)
 			},
 			expectedError: nil,
 		},
@@ -74,7 +74,7 @@ func TestLoginService_Login(t *testing.T) {
 					Email:    "ok@example.com",
 					Password: "hashedpassword",
 				}, nil)
-				mockToken.EXPECT().CheckPasswordHash("wrongpass", "hashedpassword").Return(false)
+				mockToken.EXPECT().CheckHash("wrongpass", "hashedpassword").Return(false)
 			},
 			expectedError: ErrPasswordIncorrect,
 		},
@@ -91,11 +91,11 @@ func TestLoginService_Login(t *testing.T) {
 					Email:    "ok@example.com",
 					Password: "hashedpassword",
 				}, nil)
-				mockToken.EXPECT().CheckPasswordHash("password123", "hashedpassword").Return(true)
+				mockToken.EXPECT().CheckHash("password123", "hashedpassword").Return(true)
 				mockToken.EXPECT().AccessJWT(1).Return("access-token", nil)
 				mockToken.EXPECT().RefreshJWT(1).Return("refresh-token", nil)
-				mockToken.EXPECT().HashPassword("refresh-token").Return("hashed-refresh", nil)
-				mockRepo.EXPECT().InsertRefreshToken(ctx, 1, "hashed-refresh").Return(errors.New("db error"))
+				mockToken.EXPECT().HashRefreshToken("refresh-token").Return("hashed-refresh")
+				mockRepo.EXPECT().InsertRefreshToken(1, "hashed-refresh").Return(errors.New("db error"))
 			},
 			expectedError: ErrInsertRefreshToken,
 		},

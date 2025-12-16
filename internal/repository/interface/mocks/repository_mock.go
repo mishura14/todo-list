@@ -192,17 +192,17 @@ func (m *MockUserLogin) EXPECT() *MockUserLoginMockRecorder {
 }
 
 // InsertRefreshToken mocks base method.
-func (m *MockUserLogin) InsertRefreshToken(ctx context.Context, userID int, refreshTokenHash string) error {
+func (m *MockUserLogin) InsertRefreshToken(userID int, refreshTokenHash string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertRefreshToken", ctx, userID, refreshTokenHash)
+	ret := m.ctrl.Call(m, "InsertRefreshToken", userID, refreshTokenHash)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // InsertRefreshToken indicates an expected call of InsertRefreshToken.
-func (mr *MockUserLoginMockRecorder) InsertRefreshToken(ctx, userID, refreshTokenHash interface{}) *gomock.Call {
+func (mr *MockUserLoginMockRecorder) InsertRefreshToken(userID, refreshTokenHash interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertRefreshToken", reflect.TypeOf((*MockUserLogin)(nil).InsertRefreshToken), ctx, userID, refreshTokenHash)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertRefreshToken", reflect.TypeOf((*MockUserLogin)(nil).InsertRefreshToken), userID, refreshTokenHash)
 }
 
 // SelectUser mocks base method.
@@ -258,33 +258,32 @@ func (mr *MockTokenGeneratorMockRecorder) AccessJWT(userID interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AccessJWT", reflect.TypeOf((*MockTokenGenerator)(nil).AccessJWT), userID)
 }
 
-// CheckPasswordHash mocks base method.
-func (m *MockTokenGenerator) CheckPasswordHash(password, hash string) bool {
+// CheckHash mocks base method.
+func (m *MockTokenGenerator) CheckHash(password, hash string) bool {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CheckPasswordHash", password, hash)
+	ret := m.ctrl.Call(m, "CheckHash", password, hash)
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
 
-// CheckPasswordHash indicates an expected call of CheckPasswordHash.
-func (mr *MockTokenGeneratorMockRecorder) CheckPasswordHash(password, hash interface{}) *gomock.Call {
+// CheckHash indicates an expected call of CheckHash.
+func (mr *MockTokenGeneratorMockRecorder) CheckHash(password, hash interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckPasswordHash", reflect.TypeOf((*MockTokenGenerator)(nil).CheckPasswordHash), password, hash)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckHash", reflect.TypeOf((*MockTokenGenerator)(nil).CheckHash), password, hash)
 }
 
-// HashPassword mocks base method.
-func (m *MockTokenGenerator) HashPassword(password string) (string, error) {
+// HashRefreshToken mocks base method.
+func (m *MockTokenGenerator) HashRefreshToken(token string) string {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HashPassword", password)
+	ret := m.ctrl.Call(m, "HashRefreshToken", token)
 	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
-// HashPassword indicates an expected call of HashPassword.
-func (mr *MockTokenGeneratorMockRecorder) HashPassword(password interface{}) *gomock.Call {
+// HashRefreshToken indicates an expected call of HashRefreshToken.
+func (mr *MockTokenGeneratorMockRecorder) HashRefreshToken(token interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HashPassword", reflect.TypeOf((*MockTokenGenerator)(nil).HashPassword), password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HashRefreshToken", reflect.TypeOf((*MockTokenGenerator)(nil).HashRefreshToken), token)
 }
 
 // RefreshJWT mocks base method.

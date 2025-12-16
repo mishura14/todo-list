@@ -23,12 +23,12 @@ type RedisClient interface {
 }
 type UserLogin interface {
 	SelectUser(ctx context.Context, email string) (*models.User, error)
-	InsertRefreshToken(ctx context.Context, userID int, refreshTokenHash string) error
+	InsertRefreshToken(userID int, refreshTokenHash string) error
 }
 
 type TokenGenerator interface {
-	CheckPasswordHash(password, hash string) bool
+	CheckHash(password, hash string) bool
 	RefreshJWT(userID int) (string, error)
 	AccessJWT(userID int) (string, error)
-	HashPassword(password string) (string, error)
+	HashRefreshToken(token string) string
 }
