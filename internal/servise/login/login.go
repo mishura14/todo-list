@@ -59,6 +59,6 @@ func (ls *LoginService) Login(login models.UserLogin) (accessToken string, refre
 	if err != nil {
 		return "", "", ErrInsertRefreshToken
 	}
-	return token, tokenHash, nil
+	return token, refreshToken, nil
 
 }

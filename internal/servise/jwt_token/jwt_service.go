@@ -29,3 +29,7 @@ func (a *Adapter) HashRefreshToken(token string) string {
 func (a *Adapter) CheckHash(password, hash string) bool {
 	return checkhash.CheckHash(password, hash)
 }
+
+func (a *Adapter) CheckRefreshToken(token string, storedHash string) bool {
+	return checkhash.CheckHash(token, storedHash)
+}

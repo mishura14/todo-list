@@ -47,7 +47,7 @@ func (h *HandlerLogin) Login(c *gin.Context) {
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"token":      token,
-		"token_hash": tokenHash,
+		"access":  token,
+		"refresh": tokenHash,
 	})
 }
