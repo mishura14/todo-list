@@ -5,7 +5,7 @@ import (
 	"git-register-project/internal/models"
 )
 
-func (r *PostgreUser) SelectUser(ctx context.Context, email string) (*models.User, error) {
+func (r *PostgreLogin) SelectUser(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
 
 	err := r.db.QueryRowContext(

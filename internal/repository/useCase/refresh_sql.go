@@ -7,7 +7,7 @@ import (
 )
 
 // фунция внесения refresh token в bd
-func (r *PostgreUser) InsertRefreshToken(userID int, refreshTokenHash string) error {
+func (r *PostgreLogin) InsertRefreshToken(userID int, refreshTokenHash string) error {
 
 	expiresAt := time.Now().Add(30 * 24 * time.Hour)
 

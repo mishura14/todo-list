@@ -31,6 +31,7 @@ type TokenGenerator interface {
 	RefreshJWT(userID int) (string, error)
 	AccessJWT(userID int) (string, error)
 	HashRefreshToken(token string) string
+	ValidateToken(tokenStr string) (map[string]interface{}, error)
 }
 type Refreshtoken interface {
 	SelectRefreshToken(ctx context.Context, id int) (string, error)

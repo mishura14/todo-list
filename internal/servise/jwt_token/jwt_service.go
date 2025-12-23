@@ -5,6 +5,7 @@ import (
 	accessjwt "git-register-project/internal/servise/jwt_token/accessJWT"
 	hashrefreshtoken "git-register-project/internal/servise/jwt_token/hashRefreshToken"
 	refreshjwt "git-register-project/internal/servise/jwt_token/refresh_token"
+	validatejwt "git-register-project/internal/servise/jwt_token/validateJWT"
 )
 
 // Adapter реализует интерфейс TokenGenerator
@@ -32,4 +33,8 @@ func (a *Adapter) CheckHash(password, hash string) bool {
 
 func (a *Adapter) CheckRefreshToken(token string, storedHash string) bool {
 	return checkhash.CheckHash(token, storedHash)
+}
+
+func (a *Adapter) ValidateToken(tokenStr string) (map[string]interface{}, error) {
+	return validatejwt.ValidateToken(tokenStr)
 }

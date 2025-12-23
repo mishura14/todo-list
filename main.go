@@ -36,9 +36,11 @@ func main() {
 	defer rdb.Client.Close()
 	fmt.Println("Connection Redis")
 	userRepo := useCase.NewPostgreUser(db.DB)
+	loginRepo := useCase.NewPostgreLogin(db.DB)
+	refreshRepo := useCase.NewPostgreRefresh(db.DB)
 	tokenGen := jwt_adapter.NewAdapter()
 	r := gin.Default()
-	router.SetupRouter(r, rdb, userRepo, userRepo, tokenGen)
+	router.SetupRouter(r, rdb, userRepo, loginRepo, refreshRepo, tokenGen)
 
 	// Получаем порт из .env или используем по умолчанию
 	port := os.Getenv("APP_PORT")

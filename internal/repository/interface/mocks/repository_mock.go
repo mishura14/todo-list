@@ -300,3 +300,70 @@ func (mr *MockTokenGeneratorMockRecorder) RefreshJWT(userID interface{}) *gomock
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshJWT", reflect.TypeOf((*MockTokenGenerator)(nil).RefreshJWT), userID)
 }
+
+// ValidateToken mocks base method.
+func (m *MockTokenGenerator) ValidateToken(tokenStr string) (map[string]interface{}, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ValidateToken", tokenStr)
+	ret0, _ := ret[0].(map[string]interface{})
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ValidateToken indicates an expected call of ValidateToken.
+func (mr *MockTokenGeneratorMockRecorder) ValidateToken(tokenStr interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateToken", reflect.TypeOf((*MockTokenGenerator)(nil).ValidateToken), tokenStr)
+}
+
+// MockRefreshtoken is a mock of Refreshtoken interface.
+type MockRefreshtoken struct {
+	ctrl     *gomock.Controller
+	recorder *MockRefreshtokenMockRecorder
+}
+
+// MockRefreshtokenMockRecorder is the mock recorder for MockRefreshtoken.
+type MockRefreshtokenMockRecorder struct {
+	mock *MockRefreshtoken
+}
+
+// NewMockRefreshtoken creates a new mock instance.
+func NewMockRefreshtoken(ctrl *gomock.Controller) *MockRefreshtoken {
+	mock := &MockRefreshtoken{ctrl: ctrl}
+	mock.recorder = &MockRefreshtokenMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockRefreshtoken) EXPECT() *MockRefreshtokenMockRecorder {
+	return m.recorder
+}
+
+// SelectRefreshToken mocks base method.
+func (m *MockRefreshtoken) SelectRefreshToken(ctx context.Context, id int) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectRefreshToken", ctx, id)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectRefreshToken indicates an expected call of SelectRefreshToken.
+func (mr *MockRefreshtokenMockRecorder) SelectRefreshToken(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectRefreshToken", reflect.TypeOf((*MockRefreshtoken)(nil).SelectRefreshToken), ctx, id)
+}
+
+// UpdateRefreshToken mocks base method.
+func (m *MockRefreshtoken) UpdateRefreshToken(ctx context.Context, id int, token string, expiresAt time.Time) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateRefreshToken", ctx, id, token, expiresAt)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateRefreshToken indicates an expected call of UpdateRefreshToken.
+func (mr *MockRefreshtokenMockRecorder) UpdateRefreshToken(ctx, id, token, expiresAt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRefreshToken", reflect.TypeOf((*MockRefreshtoken)(nil).UpdateRefreshToken), ctx, id, token, expiresAt)
+}
